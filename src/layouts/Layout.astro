@@ -1,0 +1,84 @@
+---
+import '../styles/global.css';
+const {
+  nav = "hero",   // "hero" | "scroll" | "solid"
+  title = "Anna's Art Studio",
+  description = "Original paintings, fine-art prints, handcrafted jewellery, and creative events by Anna Goldmeier — rooted in nature, emotion, and vibrant colour.",
+} = Astro.props;
+---
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..600;1,9..144,300..500&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
+    <title>{title}</title>
+</head>
+
+<body data-nav={nav}>
+    <!-- Header  -->
+    <nav class:list={["nav", { scrolled: nav === "solid" }]}>
+        <a class="brand" href="/">Anna's Art Studio</a>
+        <div class="links"><a href="/">Home</a><a href="/gallery">Gallery</a><a href="#">Jewellery</a><a href="#">Private Events</a><a href="/#contact">Contact</a></div>
+        <button class="burger" aria-label="Open menu" aria-expanded="false"><span></span><span></span><span></span></button>
+    </nav>
+
+    <!-- Phone menu modal -->
+    <div class="menu" id="menu" aria-hidden="true">
+        <button class="close" aria-label="Close menu">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+        </button>
+        <nav class="menu-links">
+            <a href="/">Home</a>
+            <a href="/gallery">Gallery</a>
+            <a href="#">Jewellery</a>
+            <a href="#">Private Events</a>
+            <a href="/#contact">Contact</a>
+        </nav>
+    </div>
+
+    <!-- Main content slot  -->
+    <slot />
+
+    <!-- Footer -->
+    <footer class="site-footer">
+        <div class="foot-left">
+            <span class="foot-mark">Anna's Art Studio</span>
+            <span class="foot-copy">© 2026</span>
+        </div>
+        <div class="foot-right">
+            <a class="foot-btn" href="/gallery">Gallery</a>
+            <a class="foot-btn solid" href="#contact">Contact</a>
+            <a class="to-top" href="#top">Back to top ↑</a>
+        </div>
+    </footer>
+
+    <script is:inline>
+        const mode = document.body.dataset.nav;
+        if (mode !== "solid") {
+            const nav = document.querySelector('.nav');
+            const trigger = mode === "hero" ? window.innerHeight * 0.7 : 8;
+            const onScroll = () => nav.classList.toggle('scrolled', window.scrollY > trigger);
+            onScroll();
+            window.addEventListener('scroll', onScroll, { passive: true });
+        }
+
+        // mobile menu
+        const burger=document.querySelector('.burger');
+        const menu=document.getElementById('menu');
+        const setMenu=(open)=>{
+        menu.classList.toggle('open',open);
+        document.body.classList.toggle('menu-open',open);
+        menu.setAttribute('aria-hidden',String(!open));
+        burger.setAttribute('aria-expanded',String(open));
+        };
+        burger.addEventListener('click',()=>setMenu(true));
+        menu.addEventListener('click',()=>setMenu(false)); // any click — link or empty space — closes
+        document.addEventListener('keydown',e=>{ if(e.key==='Escape') setMenu(false); });
+    </script>
+</body>
+</html>

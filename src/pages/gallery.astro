@@ -1,0 +1,113 @@
+---
+import Layout from '../layouts/Layout.astro';
+import '../styles/gallery.css';
+import { Image, getImage } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+import { paintings } from '../data/paintings.js';
+
+const files = import.meta.glob<{ default: ImageMetadata }>('../assets/paintings/*.jpeg', { eager: true });
+
+// thumbnail metadata + an optimized larger image for the lightbox view
+const gallery = await Promise.all(paintings.map(async (p) => {
+  const thumb = files[`../assets/paintings/${p.file}`].default;
+  const full = await getImage({ src: thumb, width: 1400, format: 'webp', quality: 82 });
+  return { ...p, thumb, full: full.src };
+}));
+
+// short banner-hero background
+const heroUrl = (await getImage({ src: files['../assets/paintings/19.jpeg'].default, width: 1920, format: 'webp', quality: 80 })).src;
+---
+<Layout
+  nav="solid"
+  title="Gallery — Anna's Art Studio"
+  description="Browse Anna Goldmeier's original oil paintings — one-of-a-kind originals, also available as fine-art prints."
+>
+  <section class="page-hero">
+    <div class="page-hero-bg" style={`background-image:url('${heroUrl}')`}></div>
+    <div class="page-hero-inner">
+      <h1>The Collection</h1>
+      <p>Select any painting to view details and purchasing options.</p>
+    </div>
+  </section>
+
+  <main class="g-body canvas-texture">
+    <div class="g-grid">
+      {gallery.map((g) => (
+        <button class="g-item" type="button" data-full={g.full} data-title={g.title} data-medium={g.medium}>
+          <div class="g-ph">
+            <Image src={g.thumb} alt={g.title} widths={[400, 760]} sizes="(max-width: 560px) 92vw, (max-width: 900px) 46vw, 350px" />
+          </div>
+          <div class="g-label"><span class="t">{g.title}</span><span class="m">{g.medium}</span></div>
+        </button>
+      ))}
+    </div>
+  </main>
+
+  <div class="lightbox" id="lightbox" aria-hidden="true">
+    <button class="lb-close" aria-label="Close">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+    </button>
+    <button class="lb-nav lb-prev" aria-label="Previous">&lsaquo;</button>
+    <button class="lb-nav lb-next" aria-label="Next">&rsaquo;</button>
+    <figure class="lb-stage">
+      <img class="lb-img" id="lbImg" alt="" />
+      <figcaption class="lb-info">
+        <h2 id="lbTitle"></h2>
+        <p class="g-medium" id="lbMedium"></p>
+        <div class="g-buy">
+          <a class="btn-buy" href="#">Purchase original</a>
+          <a class="btn-buy ghost" href="#">Order a print</a>
+        </div>
+      </figcaption>
+    </figure>
+  </div>
+
+  <script is:inline>
+    // parallax: the banner image drifts slower than the page
+    const pbg = document.querySelector('.page-hero-bg');
+    if (pbg && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      const onPar = () => { pbg.style.transform = `translate3d(0, ${window.scrollY * 0.2}px, 0)`; };
+      onPar();
+      window.addEventListener('scroll', onPar, { passive: true });
+    }
+
+    const items = [...document.querySelectorAll('.g-item')];
+    const lb = document.getElementById('lightbox');
+    const lbImg = document.getElementById('lbImg');
+    const lbTitle = document.getElementById('lbTitle');
+    const lbMedium = document.getElementById('lbMedium');
+    let idx = 0;
+    function fill(i){
+      const el = items[i];
+      lbImg.src = el.dataset.full;
+      lbImg.alt = el.dataset.title;
+      lbTitle.textContent = el.dataset.title;
+      lbMedium.textContent = el.dataset.medium;
+      idx = i;
+    }
+    function open(i){
+      fill(i);
+      const sw = window.innerWidth - document.documentElement.clientWidth; // scrollbar width
+      if (sw > 0) document.body.style.paddingRight = sw + 'px';
+      lb.classList.add('open'); lb.setAttribute('aria-hidden','false'); document.body.classList.add('menu-open');
+    }
+    function close(){
+      lb.classList.remove('open'); lb.setAttribute('aria-hidden','true'); document.body.classList.remove('menu-open');
+      document.body.style.paddingRight = '';
+    }
+    function step(d){ fill((idx + d + items.length) % items.length); }
+    items.forEach((el, i) => el.addEventListener('click', () => open(i)));
+    lb.querySelector('.lb-close').addEventListener('click', close);
+    lb.querySelector('.lb-prev').addEventListener('click', (e) => { e.stopPropagation(); step(-1); });
+    lb.querySelector('.lb-next').addEventListener('click', (e) => { e.stopPropagation(); step(1); });
+    lb.addEventListener('click', (e) => {
+      if (!e.target.closest('.lb-info') && !e.target.closest('.lb-img')) close();
+    });
+    document.addEventListener('keydown', (e) => {
+      if (!lb.classList.contains('open')) return;
+      if (e.key === 'Escape') close();
+      else if (e.key === 'ArrowLeft') step(-1);
+      else if (e.key === 'ArrowRight') step(1);
+    });
+  </script>
+</Layout>
