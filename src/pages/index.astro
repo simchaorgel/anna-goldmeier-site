@@ -41,8 +41,8 @@ const dividerBg = (await getImage({
 			<h1>Anna's Art<br>Studio</h1>
 			<p>Original paintings rooted in nature, emotion, and vibrant colour.</p>
 			<div class="actions">
-				<a class="cta solid" href="#">View the collection</a>
-				<a class="cta" href="#">Originals for sale →</a>
+				<a class="cta solid" href="/gallery">View the collection</a>
+				<a class="cta" href="/gallery">Originals for sale →</a>
 			</div>
 		</div>
 
@@ -193,21 +193,32 @@ const dividerBg = (await getImage({
 
 
 <script define:vars={{ heroSlides }}>
-  // shuffle so each visit starts differently
-  for(let i=heroSlides.length-1;i>0;i--){const j=(Math.random()*(i+1))|0;[heroSlides[i],heroSlides[j]]=[heroSlides[j],heroSlides[i]];}
-
-  const layers=[document.getElementById('b0'),document.getElementById('b1')];
-  const capT=document.getElementById('capT'), capD=document.getElementById('capD');
-  let cur=0, active=0;
-  function show(i){
-    const next=layers[active^1];
-    next.style.backgroundImage=`url('${heroSlides[i].src}')`;
-    next.style.animation='none'; void next.offsetWidth; next.style.animation='';
-    next.classList.add('show'); layers[active].classList.remove('show');
-    active^=1;
-    capT.textContent=heroSlides[i].t; capD.textContent=heroSlides[i].d;
+  window.__heroSlides = heroSlides;
+  if (!window.__heroInit) {
+    window.__heroInit = true;
+    let timer;
+    document.addEventListener('astro:before-swap', () => clearInterval(timer));
+    document.addEventListener('astro:page-load', () => {
+      const b0 = document.getElementById('b0'), b1 = document.getElementById('b1');
+      if (!b0 || !b1) return;                       // only on the homepage
+      const layers = [b0, b1];
+      const capT = document.getElementById('capT'), capD = document.getElementById('capD');
+      const slides = window.__heroSlides.slice();
+      for (let i = slides.length - 1; i > 0; i--) { const j = (Math.random() * (i + 1)) | 0; [slides[i], slides[j]] = [slides[j], slides[i]]; }
+      let cur = 0, active = 0;
+      const show = (i) => {
+        const next = layers[active ^ 1];
+        next.style.backgroundImage = `url('${slides[i].src}')`;
+        next.style.animation = 'none'; void next.offsetWidth; next.style.animation = '';
+        next.classList.add('show'); layers[active].classList.remove('show');
+        active ^= 1;
+        if (capT) capT.textContent = slides[i].t;
+        if (capD) capD.textContent = slides[i].d;
+      };
+      show(0);
+      clearInterval(timer);
+      timer = setInterval(() => { cur = (cur + 1) % slides.length; show(cur); }, 14000);
+    });
   }
-  show(0);
-  setInterval(()=>{cur=(cur+1)%heroSlides.length;show(cur);},14000);
 </script>
 </Layout>

@@ -1,5 +1,6 @@
 ---
 import '../styles/global.css';
+import { ClientRouter } from 'astro:transitions';
 const {
   nav = "hero",   // "hero" | "scroll" | "solid"
   title = "Anna's Art Studio",
@@ -17,6 +18,7 @@ const {
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..600;1,9..144,300..500&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
     <title>{title}</title>
+    <ClientRouter />
 </head>
 
 <body data-nav={nav}>
@@ -57,28 +59,52 @@ const {
         </div>
     </footer>
 
-    <script is:inline>
-        const mode = document.body.dataset.nav;
-        if (mode !== "solid") {
+    <script>
+        // --- global listeners: registered ONCE for the whole session ---
+        window.addEventListener('scroll', () => {
             const nav = document.querySelector('.nav');
-            const trigger = mode === "hero" ? window.innerHeight * 0.7 : 8;
-            const onScroll = () => nav.classList.toggle('scrolled', window.scrollY > trigger);
-            onScroll();
-            window.addEventListener('scroll', onScroll, { passive: true });
-        }
+            if (!nav) return;
+            const mode = document.body.dataset.nav;
+            if (mode === 'solid') return;            // stays solid (class set in markup)
+            const trigger = mode === 'hero' ? window.innerHeight * 0.7 : 8;
+            nav.classList.toggle('scrolled', window.scrollY > trigger);
+        }, { passive: true });
 
-        // mobile menu
-        const burger=document.querySelector('.burger');
-        const menu=document.getElementById('menu');
-        const setMenu=(open)=>{
-        menu.classList.toggle('open',open);
-        document.body.classList.toggle('menu-open',open);
-        menu.setAttribute('aria-hidden',String(!open));
-        burger.setAttribute('aria-expanded',String(open));
-        };
-        burger.addEventListener('click',()=>setMenu(true));
-        menu.addEventListener('click',()=>setMenu(false)); // any click — link or empty space — closes
-        document.addEventListener('keydown',e=>{ if(e.key==='Escape') setMenu(false); });
+        document.addEventListener('keydown', (e) => {
+            if (e.key !== 'Escape') return;
+            const menu = document.getElementById('menu');
+            if (menu && menu.classList.contains('open')) {
+                menu.classList.remove('open');
+                document.body.classList.remove('menu-open');
+                menu.setAttribute('aria-hidden', 'true');
+            }
+        });
+
+        // --- per-page setup: runs on first load AND after every view transition ---
+        document.addEventListener('astro:page-load', () => {
+            // nav initial state for this page
+            const nav = document.querySelector('.nav');
+            if (nav) {
+                const mode = document.body.dataset.nav;
+                if (mode !== 'solid') {
+                    const trigger = mode === 'hero' ? window.innerHeight * 0.7 : 8;
+                    nav.classList.toggle('scrolled', window.scrollY > trigger);
+                }
+            }
+            // mobile menu (elements are fresh after each navigation → no stacking)
+            const burger = document.querySelector('.burger');
+            const menu = document.getElementById('menu');
+            if (burger && menu) {
+                const setMenu = (open: boolean) => {
+                    menu.classList.toggle('open', open);
+                    document.body.classList.toggle('menu-open', open);
+                    menu.setAttribute('aria-hidden', String(!open));
+                    burger.setAttribute('aria-expanded', String(open));
+                };
+                burger.addEventListener('click', () => setMenu(true));
+                menu.addEventListener('click', () => setMenu(false));
+            }
+        });
     </script>
 </body>
 </html>

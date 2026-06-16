@@ -63,51 +63,61 @@ const heroUrl = (await getImage({ src: files['../assets/paintings/19.jpeg'].defa
   </div>
 
   <script is:inline>
-    // parallax: the banner image drifts slower than the page
-    const pbg = document.querySelector('.page-hero-bg');
-    if (pbg && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      const onPar = () => { pbg.style.transform = `translate3d(0, ${window.scrollY * 0.2}px, 0)`; };
-      onPar();
-      window.addEventListener('scroll', onPar, { passive: true });
-    }
+   if (!window.__galleryReg) {
+    window.__galleryReg = true;
+    // Runs whenever the gallery page loads (initial or via a view transition).
+    document.addEventListener('astro:page-load', () => {
+      const lb = document.getElementById('lightbox');
+      const items = [...document.querySelectorAll('.g-item')];
+      if (!lb || !items.length) return;            // not on the gallery
 
-    const items = [...document.querySelectorAll('.g-item')];
-    const lb = document.getElementById('lightbox');
-    const lbImg = document.getElementById('lbImg');
-    const lbTitle = document.getElementById('lbTitle');
-    const lbMedium = document.getElementById('lbMedium');
-    let idx = 0;
-    function fill(i){
-      const el = items[i];
-      lbImg.src = el.dataset.full;
-      lbImg.alt = el.dataset.title;
-      lbTitle.textContent = el.dataset.title;
-      lbMedium.textContent = el.dataset.medium;
-      idx = i;
-    }
-    function open(i){
-      fill(i);
-      const sw = window.innerWidth - document.documentElement.clientWidth; // scrollbar width
-      if (sw > 0) document.body.style.paddingRight = sw + 'px';
-      lb.classList.add('open'); lb.setAttribute('aria-hidden','false'); document.body.classList.add('menu-open');
-    }
-    function close(){
-      lb.classList.remove('open'); lb.setAttribute('aria-hidden','true'); document.body.classList.remove('menu-open');
-      document.body.style.paddingRight = '';
-    }
-    function step(d){ fill((idx + d + items.length) % items.length); }
-    items.forEach((el, i) => el.addEventListener('click', () => open(i)));
-    lb.querySelector('.lb-close').addEventListener('click', close);
-    lb.querySelector('.lb-prev').addEventListener('click', (e) => { e.stopPropagation(); step(-1); });
-    lb.querySelector('.lb-next').addEventListener('click', (e) => { e.stopPropagation(); step(1); });
-    lb.addEventListener('click', (e) => {
-      if (!e.target.closest('.lb-info') && !e.target.closest('.lb-img')) close();
+      const lbImg = document.getElementById('lbImg');
+      const lbTitle = document.getElementById('lbTitle');
+      const lbMedium = document.getElementById('lbMedium');
+      let idx = 0;
+      const fill = (i) => {
+        const el = items[i];
+        lbImg.src = el.dataset.full; lbImg.alt = el.dataset.title;
+        lbTitle.textContent = el.dataset.title; lbMedium.textContent = el.dataset.medium; idx = i;
+      };
+      const openLb = (i) => {
+        fill(i);
+        const sw = window.innerWidth - document.documentElement.clientWidth;
+        if (sw > 0) document.body.style.paddingRight = sw + 'px';
+        lb.classList.add('open'); lb.setAttribute('aria-hidden', 'false'); document.body.classList.add('menu-open');
+      };
+      const closeLb = () => {
+        lb.classList.remove('open'); lb.setAttribute('aria-hidden', 'true'); document.body.classList.remove('menu-open');
+        document.body.style.paddingRight = '';
+      };
+      const step = (d) => fill((idx + d + items.length) % items.length);
+
+      // element listeners — bound to fresh elements each page-load, so no stacking
+      items.forEach((el, i) => el.addEventListener('click', () => openLb(i)));
+      lb.querySelector('.lb-close').addEventListener('click', closeLb);
+      lb.querySelector('.lb-prev').addEventListener('click', (e) => { e.stopPropagation(); step(-1); });
+      lb.querySelector('.lb-next').addEventListener('click', (e) => { e.stopPropagation(); step(1); });
+      lb.addEventListener('click', (e) => { if (!e.target.closest('.lb-info') && !e.target.closest('.lb-img')) closeLb(); });
+
+      // expose for the once-registered global handlers below
+      window.__lb = { lb, closeLb, step };
+      window.__pbg = document.querySelector('.page-hero-bg');
+      const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (window.__pbg && !reduce) window.__pbg.style.transform = `translate3d(0, ${window.scrollY * 0.2}px, 0)`;
     });
+
+    // global listeners (within the same one-time guard)
+    const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    window.addEventListener('scroll', () => {
+      if (window.__pbg && !reduce) window.__pbg.style.transform = `translate3d(0, ${window.scrollY * 0.2}px, 0)`;
+    }, { passive: true });
     document.addEventListener('keydown', (e) => {
-      if (!lb.classList.contains('open')) return;
-      if (e.key === 'Escape') close();
-      else if (e.key === 'ArrowLeft') step(-1);
-      else if (e.key === 'ArrowRight') step(1);
+      const g = window.__lb;
+      if (!g || !g.lb.classList.contains('open')) return;
+      if (e.key === 'Escape') g.closeLb();
+      else if (e.key === 'ArrowLeft') g.step(-1);
+      else if (e.key === 'ArrowRight') g.step(1);
     });
+   }
   </script>
 </Layout>
