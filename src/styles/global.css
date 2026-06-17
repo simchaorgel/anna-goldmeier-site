@@ -8,6 +8,7 @@ html{scroll-behavior:smooth}
 body{font-family:'Inter',sans-serif;color:#fff;background:#100e0c;overflow-x:hidden}
 /* content pages (non-hero) sit on paper, so any scrollbar gutter / overscroll is light, not black */
 body:not([data-nav="hero"]){background:var(--paper);color:var(--ink)}
+::selection{background:rgba(179,157,219,.5)}
 
 /* ---- nav / header ---- */
 .nav{position:fixed;top:0;left:0;right:0;z-index:40;display:flex;justify-content:space-between;align-items:center;
@@ -74,6 +75,17 @@ body.menu-open{overflow:hidden}
     background-size:260px 260px;
     background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='260'%3E%3Cfilter id='w'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.012 0.4' numOctaves='2' seed='3' result='h'/%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.4 0.012' numOctaves='2' seed='8' result='v'/%3E%3CfeBlend in='h' in2='v' mode='multiply' result='b'/%3E%3CfeColorMatrix in='b' type='matrix' values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.6 0.6 0.6 0 -0.62'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23w)'/%3E%3C/svg%3E")}
 
+/* ---- reusable short page-hero banner (gallery, contact, …) ---- */
+.page-hero{position:relative;overflow:hidden;min-height:46vh;display:flex;align-items:center;justify-content:center;text-align:center;
+    color:#fff;padding-top:clamp(4.5rem,9vh,6rem)}
+.page-hero-bg{position:absolute;inset:-25% 0;z-index:0;background-size:cover;background-position:center 40%;will-change:transform}
+.page-hero::before{content:"";position:absolute;inset:0;z-index:1;background:linear-gradient(rgba(14,11,8,.5),rgba(14,11,8,.42))}
+.page-hero-inner{position:relative;z-index:2;max-width:60ch;padding:0 1.4rem}
+.page-hero h1{font-family:'Fraunces',serif;font-weight:330;font-size:clamp(2.4rem,5.5vw,3.8rem);line-height:1;
+    text-shadow:0 2px 30px rgba(0,0,0,.4)}
+.page-hero p{margin-top:.8rem;font-weight:300;font-size:.92rem;opacity:.92;text-shadow:0 1px 14px rgba(0,0,0,.5)}
+@media(max-width:760px){ .page-hero{min-height:40vh} }
+
 /* ---- footer (slim bar) ---- */
 .site-footer{position:relative;z-index:2;background:var(--paper);color:var(--ink);border-top:1px solid var(--line);
     display:flex;justify-content:space-between;align-items:center;gap:1rem 1.6rem;flex-wrap:wrap;
@@ -91,3 +103,8 @@ body.menu-open{overflow:hidden}
 .to-top{font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);text-decoration:none;
     margin-left:.4rem;transition:color .25s}
 .to-top:hover{color:var(--ink)}
+@media(max-width:560px){
+    .site-footer{flex-direction:column;align-items:stretch;gap:1rem}
+    .foot-right{width:100%}
+    .to-top{margin-left:auto}
+}

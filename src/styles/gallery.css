@@ -1,18 +1,6 @@
 /* ====================================================================
    GALLERY — image-first 2-up grid; details + purchase live in a lightbox
    ==================================================================== */
-/* short page hero (banner) */
-.page-hero{position:relative;overflow:hidden;min-height:46vh;display:flex;align-items:center;justify-content:center;text-align:center;
-    color:#fff;padding-top:clamp(4.5rem,9vh,6rem)}
-/* parallax layer — taller than the hero so it has room to drift on scroll */
-.page-hero-bg{position:absolute;inset:-25% 0;z-index:0;background-size:cover;background-position:center 40%;will-change:transform}
-.page-hero::before{content:"";position:absolute;inset:0;z-index:1;background:linear-gradient(rgba(14,11,8,.5),rgba(14,11,8,.42))}
-.page-hero-inner{position:relative;z-index:2;max-width:60ch;padding:0 1.4rem}
-.page-hero h1{font-family:'Fraunces',serif;font-weight:330;font-size:clamp(2.4rem,5.5vw,3.8rem);line-height:1;
-    text-shadow:0 2px 30px rgba(0,0,0,.4)}
-.page-hero p{margin-top:.8rem;font-weight:300;font-size:.92rem;opacity:.92;text-shadow:0 1px 14px rgba(0,0,0,.5)}
-@media(max-width:760px){ .page-hero{min-height:40vh} }
-
 /* gallery body (paper, holds the grid) */
 .g-body{position:relative;z-index:2;background:var(--paper);
     padding:clamp(3.5rem,9vh,6rem) clamp(1.4rem,6vw,4rem) clamp(4rem,9vh,6rem)}
@@ -44,7 +32,8 @@
     opacity:0;visibility:hidden;transition:opacity .3s ease, visibility .3s}
 .lightbox.open{opacity:1;visibility:visible}
 .lb-stage{display:flex;flex-direction:row;align-items:center;gap:clamp(1.5rem,4vw,3rem);max-width:1150px;max-height:100%}
-.lb-img{max-width:min(68vw,860px);max-height:86vh;width:auto;height:auto;display:block;box-shadow:0 30px 70px -30px rgba(0,0,0,.7)}
+.lb-img{max-width:min(68vw,860px);max-height:86vh;width:auto;height:auto;display:block;box-shadow:0 30px 70px -30px rgba(0,0,0,.7);transition:filter .4s ease}
+.lb-img.lb-loading{filter:blur(16px)}
 .lb-info{text-align:left;color:#f2ece0;flex-shrink:0;width:clamp(200px,22vw,280px)}
 .lb-info h2{font-family:'Fraunces',serif;font-style:italic;font-weight:380;font-size:clamp(1.5rem,3vw,2.1rem);margin-bottom:.3rem}
 .lb-info .g-medium{color:#cabfac;margin-bottom:1.4rem}
@@ -65,7 +54,7 @@
 .lb-info{text-align:center;width:auto}
 .lb-info .g-buy{flex-direction:row;justify-content:center}
 .lb-img{max-width:100%;max-height:56vh}
-.lb-nav{top:auto;bottom:.7rem;transform:none;font-size:2.2rem;padding:.2rem .9rem}
-.lb-prev{left:calc(50% - 62px);right:auto}
-.lb-next{left:auto;right:calc(50% - 62px)}
+.lb-nav{top:auto;bottom:1.9rem;transform:none;font-size:2.2rem;padding:.2rem .9rem}
+.lb-prev{left:calc(50% - 96px);right:auto}
+.lb-next{left:auto;right:calc(50% - 96px)}
 }

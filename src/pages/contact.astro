@@ -1,0 +1,93 @@
+---
+import Layout from '../layouts/Layout.astro';
+import '../styles/contact.css';
+import { getImage } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+
+const files = import.meta.glob<{ default: ImageMetadata }>('../assets/paintings/*.jpeg', { eager: true });
+const heroUrl = (await getImage({ src: files['../assets/paintings/18.jpeg'].default, width: 1920, format: 'webp', quality: 80 })).src;
+---
+<Layout
+  nav="solid"
+  title="Contact — Anna's Art Studio"
+  description="Get in touch with Anna Goldmeier — enquiries, commissions, prints, jewellery, and private events."
+>
+  <section class="page-hero">
+    <div class="page-hero-bg" style={`background-image:url('${heroUrl}')`}></div>
+    <div class="page-hero-inner">
+      <h1>Get in Touch</h1>
+      <p>For availability, commissions, prints, jewellery, and private events — every piece begins with a conversation.</p>
+    </div>
+  </section>
+
+  <main class="contact-body canvas-texture">
+    <div class="contact-grid">
+      <div class="contact-main">
+        <form class="contact-form" id="contactForm" name="contact" method="POST" data-netlify="true" netlify-honeypot="bot-field">
+          <input type="hidden" name="form-name" value="contact" />
+          <p class="hp"><label>Leave this empty if you're human: <input name="bot-field" /></label></p>
+
+          <div class="field">
+            <label for="name">Name</label>
+            <input id="name" name="name" type="text" autocomplete="name" required />
+          </div>
+          <div class="field">
+            <label for="email">Email</label>
+            <input id="email" name="email" type="email" autocomplete="email" required />
+          </div>
+          <div class="field">
+            <label for="message">Message</label>
+            <textarea id="message" name="message" required></textarea>
+          </div>
+          <button class="form-submit" type="submit">Send enquiry</button>
+        </form>
+
+        <div class="form-thanks" id="formThanks">
+          <h2>Thank you</h2>
+          <p>Your message is on its way — Anna reads every enquiry personally and will be in touch soon.</p>
+        </div>
+      </div>
+
+      <aside class="contact-aside">
+        <h2>Or reach out directly</h2>
+        <div class="c-item">
+          <div class="c-label">Email</div>
+          <a href="mailto:anngoldmeier@gmail.com">anngoldmeier@gmail.com</a>
+        </div>
+        <div class="c-item">
+          <div class="c-label">Text / WhatsApp</div>
+          <a class="c-wa" href="https://wa.me/447910262259">07910 262259</a>
+        </div>
+        <div class="c-item">
+          <div class="c-label">Response</div>
+          <p class="c-note">I aim to reply within a couple of days.</p>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <script is:inline>
+    if (!window.__contactReg) {
+      window.__contactReg = true;
+      document.addEventListener('astro:page-load', () => {
+        const form = document.getElementById('contactForm');
+        if (!form) return;
+        form.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          try {
+            const data = new FormData(form);
+            await fetch('/', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+              body: new URLSearchParams(data).toString(),
+            });
+          } catch (err) { /* still show thanks; the submission is queued by Netlify */ }
+          form.style.display = 'none';
+          const thanks = document.getElementById('formThanks');
+          if (thanks) thanks.classList.add('show');
+          thanks && thanks.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        });
+      });
+    }
+  </script>
+</Layout>

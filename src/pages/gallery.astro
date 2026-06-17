@@ -77,8 +77,19 @@ const heroUrl = (await getImage({ src: files['../assets/paintings/19.jpeg'].defa
       let idx = 0;
       const fill = (i) => {
         const el = items[i];
-        lbImg.src = el.dataset.full; lbImg.alt = el.dataset.title;
+        const thumb = el.querySelector('img');
+        // show the already-loaded thumbnail instantly (blurred), then sharpen to full-res
+        lbImg.src = (thumb && (thumb.currentSrc || thumb.src)) || el.dataset.full;
+        lbImg.classList.add('lb-loading');
+        lbImg.alt = el.dataset.title;
         lbTitle.textContent = el.dataset.title; lbMedium.textContent = el.dataset.medium; idx = i;
+        const full = new Image();
+        full.onload = () => { lbImg.src = el.dataset.full; lbImg.classList.remove('lb-loading'); };
+        full.src = el.dataset.full;
+        // warm the cache for the neighbours so prev/next feel instant
+        [(i + 1) % items.length, (i - 1 + items.length) % items.length].forEach((n) => {
+          const im = new Image(); im.src = items[n].dataset.full;
+        });
       };
       const openLb = (i) => {
         fill(i);
@@ -99,18 +110,20 @@ const heroUrl = (await getImage({ src: files['../assets/paintings/19.jpeg'].defa
       lb.querySelector('.lb-next').addEventListener('click', (e) => { e.stopPropagation(); step(1); });
       lb.addEventListener('click', (e) => { if (!e.target.closest('.lb-info') && !e.target.closest('.lb-img')) closeLb(); });
 
+      // swipe left/right to navigate (mobile)
+      let tsx = 0, tsy = 0;
+      lb.addEventListener('touchstart', (e) => { tsx = e.changedTouches[0].clientX; tsy = e.changedTouches[0].clientY; }, { passive: true });
+      lb.addEventListener('touchend', (e) => {
+        const dx = e.changedTouches[0].clientX - tsx;
+        const dy = e.changedTouches[0].clientY - tsy;
+        if (Math.abs(dx) > 45 && Math.abs(dx) > Math.abs(dy)) step(dx < 0 ? 1 : -1);
+      }, { passive: true });
+
       // expose for the once-registered global handlers below
       window.__lb = { lb, closeLb, step };
-      window.__pbg = document.querySelector('.page-hero-bg');
-      const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
-      if (window.__pbg && !reduce) window.__pbg.style.transform = `translate3d(0, ${window.scrollY * 0.2}px, 0)`;
     });
 
     // global listeners (within the same one-time guard)
-    const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
-    window.addEventListener('scroll', () => {
-      if (window.__pbg && !reduce) window.__pbg.style.transform = `translate3d(0, ${window.scrollY * 0.2}px, 0)`;
-    }, { passive: true });
     document.addEventListener('keydown', (e) => {
       const g = window.__lb;
       if (!g || !g.lb.classList.contains('open')) return;

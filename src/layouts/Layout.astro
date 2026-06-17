@@ -25,7 +25,7 @@ const {
     <!-- Header  -->
     <nav class:list={["nav", { scrolled: nav === "solid" }]}>
         <a class="brand" href="/">Anna's Art Studio</a>
-        <div class="links"><a href="/">Home</a><a href="/gallery">Gallery</a><a href="#">Jewellery</a><a href="#">Private Events</a><a href="/#contact">Contact</a></div>
+        <div class="links"><a href="/">Home</a><a href="/gallery">Gallery</a><a href="#">Jewellery</a><a href="#">Private Events</a><a href="/contact">Contact</a></div>
         <button class="burger" aria-label="Open menu" aria-expanded="false"><span></span><span></span><span></span></button>
     </nav>
 
@@ -39,7 +39,7 @@ const {
             <a href="/gallery">Gallery</a>
             <a href="#">Jewellery</a>
             <a href="#">Private Events</a>
-            <a href="/#contact">Contact</a>
+            <a href="/contact">Contact</a>
         </nav>
     </div>
 
@@ -54,20 +54,29 @@ const {
         </div>
         <div class="foot-right">
             <a class="foot-btn" href="/gallery">Gallery</a>
-            <a class="foot-btn solid" href="#contact">Contact</a>
+            <a class="foot-btn solid" href="/contact">Contact</a>
             <a class="to-top" href="#top">Back to top ↑</a>
         </div>
     </footer>
 
     <script>
+        const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+        const parallax = () => {
+            const pbg = (window as any).__pbg;
+            if (pbg && !reduceMotion) pbg.style.transform = `translate3d(0, ${window.scrollY * 0.2}px, 0)`;
+        };
+
         // --- global listeners: registered ONCE for the whole session ---
         window.addEventListener('scroll', () => {
             const nav = document.querySelector('.nav');
-            if (!nav) return;
-            const mode = document.body.dataset.nav;
-            if (mode === 'solid') return;            // stays solid (class set in markup)
-            const trigger = mode === 'hero' ? window.innerHeight * 0.7 : 8;
-            nav.classList.toggle('scrolled', window.scrollY > trigger);
+            if (nav) {
+                const mode = document.body.dataset.nav;
+                if (mode !== 'solid') {              // solid stays solid (class set in markup)
+                    const trigger = mode === 'hero' ? window.innerHeight * 0.7 : 8;
+                    nav.classList.toggle('scrolled', window.scrollY > trigger);
+                }
+            }
+            parallax();                              // drifts any .page-hero-bg on the page
         }, { passive: true });
 
         document.addEventListener('keydown', (e) => {
@@ -82,6 +91,9 @@ const {
 
         // --- per-page setup: runs on first load AND after every view transition ---
         document.addEventListener('astro:page-load', () => {
+            // banner parallax target for this page (if any)
+            (window as any).__pbg = document.querySelector('.page-hero-bg');
+            parallax();
             // nav initial state for this page
             const nav = document.querySelector('.nav');
             if (nav) {
