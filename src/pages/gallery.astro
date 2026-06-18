@@ -33,7 +33,7 @@ const heroUrl = (await getImage({ src: files['../assets/paintings/19.jpeg'].defa
   <main class="g-body canvas-texture">
     <div class="g-grid">
       {gallery.map((g) => (
-        <button class="g-item" type="button" data-full={g.full} data-title={g.title} data-medium={g.medium}>
+        <button class="g-item" type="button" data-file={g.file} data-full={g.full} data-title={g.title} data-medium={g.medium}>
           <div class="g-ph">
             <Image src={g.thumb} alt={g.title} widths={[400, 760]} sizes="(max-width: 560px) 92vw, (max-width: 900px) 46vw, 350px" />
           </div>
@@ -91,15 +91,20 @@ const heroUrl = (await getImage({ src: files['../assets/paintings/19.jpeg'].defa
           const im = new Image(); im.src = items[n].dataset.full;
         });
       };
+      const navEl = document.querySelector('.nav');
       const openLb = (i) => {
         fill(i);
         const sw = window.innerWidth - document.documentElement.clientWidth;
-        if (sw > 0) document.body.style.paddingRight = sw + 'px';
+        if (sw > 0) {
+          document.body.style.paddingRight = sw + 'px';
+          if (navEl) navEl.style.right = sw + 'px';   // 'right' isn't transitioned, so it snaps (no slide)
+        }
         lb.classList.add('open'); lb.setAttribute('aria-hidden', 'false'); document.body.classList.add('menu-open');
       };
       const closeLb = () => {
         lb.classList.remove('open'); lb.setAttribute('aria-hidden', 'true'); document.body.classList.remove('menu-open');
         document.body.style.paddingRight = '';
+        if (navEl) navEl.style.right = '';
       };
       const step = (d) => fill((idx + d + items.length) % items.length);
 
@@ -118,6 +123,10 @@ const heroUrl = (await getImage({ src: files['../assets/paintings/19.jpeg'].defa
         const dy = e.changedTouches[0].clientY - tsy;
         if (Math.abs(dx) > 45 && Math.abs(dx) > Math.abs(dy)) step(dx < 0 ? 1 : -1);
       }, { passive: true });
+
+      // arriving from a homepage thumbnail (/gallery?19.jpeg) → open it directly
+      const art = decodeURIComponent(location.search.replace(/^\?/, ''));
+      if (art) { const ai = items.findIndex((el) => el.dataset.file === art); if (ai >= 0) openLb(ai); }
 
       // expose for the once-registered global handlers below
       window.__lb = { lb, closeLb, step };

@@ -31,7 +31,7 @@ const dividerBg = (await getImage({
 })).src;
 ---
 
-<Layout nav="hero" title="Anna's Art Studio - Original Paintings, Jewellery & Events">
+<Layout nav="hero" title="Anna's Art Studio | Original Paintings, Jewellery & Events">
   	<section class="stage" id="top">
 		<div class="bg" id="b0"></div>
 		<div class="bg" id="b1"></div>
@@ -121,7 +121,7 @@ const dividerBg = (await getImage({
     </div>
    <div class="works">
 		{selectedWorks.map((w) => (
-			<a class="work" href="#">
+			<a class="work" href={`/gallery?${w.file}`}>
 				<div class="ph">
 					<Image
 						src={paintings[`../assets/paintings/${w.file}`].default}
