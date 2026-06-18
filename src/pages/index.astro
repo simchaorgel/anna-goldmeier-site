@@ -31,7 +31,7 @@ const dividerBg = (await getImage({
 })).src;
 ---
 
-<Layout nav="hero" title="Anna's Art Studio — Original Paintings, Jewellery & Events">
+<Layout nav="hero" title="Anna's Art Studio - Original Paintings, Jewellery & Events">
   	<section class="stage" id="top">
 		<div class="bg" id="b0"></div>
 		<div class="bg" id="b1"></div>
@@ -88,7 +88,7 @@ const dividerBg = (await getImage({
         <p>Anna's Art Studio presents curated original artwork rooted in expression, emotion, and vibrancy. Inspired by a wide range of artistic movements — particularly Impressionism and illustration — my work reflects decades of dedication to refining technique, style, and creative expression. Through years of exploration and evolving practice, more recently I have developed an artistic approach focused on the beauty to be found within nature, bringing a fresh and organic feeling to everyday life through my art.</p>
         <p>From exclusive original pieces to commissioned works and creative collaborations, each creation is designed to convey emotion, provoke thought, and offer a distinctive visual experience. At the heart of my work is a passion for sharing meaning through art and creating pieces that resonate on a personal and lasting level.</p>
         <div class="sig">— Anna</div>
-        <a class="more" href="#">Get in touch →</a>
+        <a class="more" href="/contact">Get in touch →</a>
       </div>
     </div>
   </section>
@@ -134,7 +134,7 @@ const dividerBg = (await getImage({
 				</a>
 			))}
 	</div>
-    <div class="sel-cta"><a href="#">View the gallery →</a></div>
+    <div class="sel-cta"><a href="/gallery">View the gallery →</a></div>
   </section>
 
   <section class="offer">
@@ -164,7 +164,7 @@ const dividerBg = (await getImage({
       </span>
     </div>
     <div class="cards">
-      <a class="card" href="#">
+      <a class="card" href="/gallery">
         <Image src={paintings['../assets/paintings/18.jpeg'].default} alt="Gallery" widths={[400, 800]} sizes="(max-width: 820px) 92vw, 290px" />
         <div class="cap"><h3>Gallery</h3><span class="desc">Browse Anna's works and order originals or copies</span></div>
       </a>
@@ -172,7 +172,7 @@ const dividerBg = (await getImage({
         <Image src={bands} alt="Jewellery" widths={[400, 800]} sizes="(max-width: 820px) 92vw, 290px" />
         <div class="cap"><h3>Jewellery</h3><span class="desc">Custom made jewellery</span></div>
       </a>
-      <a class="card" href="#">
+      <a class="card" href="/private-events">
         <Image src={eventPhoto} alt="Private Events" widths={[400, 800]} sizes="(max-width: 820px) 92vw, 290px" />
         <div class="cap"><h3>Private Events</h3><span class="desc">Workshops and parties</span></div>
       </a>

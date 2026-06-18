@@ -31,8 +31,8 @@
 
 /* aside — direct contact */
 .contact-aside h2{font-family:'Fraunces',serif;font-style:italic;font-weight:380;font-size:1.4rem;margin-bottom:1.2rem}
-.c-item{margin-bottom:1.4rem}
-.c-label{font-size:.68rem;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-bottom:.35rem}
+.c-item{margin-bottom:1.7rem}
+.c-label{font-size:.68rem;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-bottom:.7rem}
 .c-item a{color:var(--ink);text-decoration:none;border-bottom:1px solid var(--line);transition:border-color .25s}
 .c-item a:hover{border-color:var(--accent)}
 .c-wa{display:inline-block;border:1px solid var(--ink) !important;border-radius:999px;padding:.6rem 1.2rem;
