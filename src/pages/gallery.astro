@@ -92,7 +92,9 @@ const heroUrl = (await getImage({ src: files['../assets/paintings/19.jpeg'].defa
         });
       };
       const navEl = document.querySelector('.nav');
+      let closeTimer;
       const openLb = (i) => {
+        clearTimeout(closeTimer);
         fill(i);
         const sw = window.innerWidth - document.documentElement.clientWidth;
         if (sw > 0) {
@@ -102,9 +104,14 @@ const heroUrl = (await getImage({ src: files['../assets/paintings/19.jpeg'].defa
         lb.classList.add('open'); lb.setAttribute('aria-hidden', 'false'); document.body.classList.add('menu-open');
       };
       const closeLb = () => {
-        lb.classList.remove('open'); lb.setAttribute('aria-hidden', 'true'); document.body.classList.remove('menu-open');
-        document.body.style.paddingRight = '';
-        if (navEl) navEl.style.right = '';
+        lb.classList.remove('open'); lb.setAttribute('aria-hidden', 'true');
+        // wait for the fade-out to finish before restoring the scrollbar, so content doesn't jump mid-close
+        clearTimeout(closeTimer);
+        closeTimer = setTimeout(() => {
+          document.body.classList.remove('menu-open');
+          document.body.style.paddingRight = '';
+          if (navEl) navEl.style.right = '';
+        }, 300);
       };
       const step = (d) => fill((idx + d + items.length) % items.length);
 
