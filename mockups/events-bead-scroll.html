@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Private Events — Bead Scroll mockup</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..600;1,9..144,300..500&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#f5f1e8; --paper2:#efe9db; --ink:#211d18; --muted:#7c7066; --line:#e0d7c6;
+    --accent:#b5654a;
+    --c-red:#c03b2b; --c-cobalt:#2b5fa6; --c-gold:#dba12a; --c-green:#5e8b55; --c-plum:#86436a;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{font-family:'Inter',sans-serif;color:var(--ink);
+       background:
+         radial-gradient(120% 60% at 50% 0%, #faf7ef 0%, var(--paper) 40%, var(--paper2) 100%);
+       background-attachment:fixed}
+
+  /* ---------- HERO ---------- */
+  .hero{min-height:78vh;display:flex;flex-direction:column;align-items:center;justify-content:center;
+        text-align:center;padding:8vh 6vw 4vh}
+  .eyebrow{font-size:.72rem;letter-spacing:.34em;text-transform:uppercase;color:var(--accent);margin-bottom:1.6rem}
+  .hero h1{font-family:'Fraunces',serif;font-weight:330;font-size:clamp(2.6rem,6.5vw,4.8rem);line-height:1.02;max-width:16ch}
+  .hero h1 em{font-style:italic;color:var(--accent)}
+  .hero p{color:var(--muted);font-weight:300;line-height:1.8;max-width:48ch;margin:1.6rem auto 0}
+  .hint{margin-top:3rem;font-size:.7rem;letter-spacing:.28em;text-transform:uppercase;color:var(--muted)}
+  .hint::after{content:"";display:block;width:1px;height:42px;margin:.9rem auto 0;
+               background:linear-gradient(var(--muted),transparent)}
+
+  /* ---------- TIMELINE / BEAD CHAIN ---------- */
+  .timeline{position:relative;max-width:980px;margin:2vh auto 0;padding:2rem 1.2rem 0}
+
+  /* the seed-bead chain (its height is driven by scroll) */
+  .chain{position:absolute;left:50%;transform:translateX(-50%);top:0;width:15px;height:0;
+         background:radial-gradient(circle at 50% 50%, #f1e6cb 0 5px, #cdb389 5px 7px, transparent 7.4px);
+         background-size:15px 15px;background-repeat:repeat-y;background-position:center top;
+         filter:drop-shadow(0 1px 1px rgba(0,0,0,.12));z-index:0;border-radius:8px}
+  @media(prefers-reduced-motion:reduce){ .chain{height:auto!important;bottom:0} }
+
+  .needle{position:absolute;left:50%;top:-34px;transform:translateX(-50%);z-index:2;color:#b9a884}
+
+  .node{position:relative;z-index:1;display:grid;grid-template-columns:1fr 70px 1fr;
+        align-items:center;min-height:34vh;padding:2vh 0}
+  .bead-wrap{grid-column:2;display:flex;justify-content:center}
+  .bead{--s:46px;width:var(--s);height:var(--s);border-radius:50%;position:relative;
+        background:
+          radial-gradient(circle at 34% 28%, rgba(255,255,255,.9), rgba(255,255,255,0) 44%),
+          radial-gradient(circle at 68% 74%, rgba(0,0,0,.32), transparent 52%),
+          var(--c,#888);
+        box-shadow:0 8px 18px -7px rgba(40,25,15,.6), inset 0 0 10px rgba(0,0,0,.18);
+        transform:scale(0);transition:transform .6s cubic-bezier(.34,1.56,.5,1)}
+  .node.in .bead{transform:scale(1)}
+  .bead.big{--s:58px}
+
+  .card{grid-row:1;max-width:380px;opacity:0;transition:opacity .7s ease, transform .7s ease}
+  .node:nth-child(odd)  .card{grid-column:1;justify-self:end;text-align:right;transform:translateX(26px)}
+  .node:nth-child(even) .card{grid-column:3;justify-self:start;text-align:left;transform:translateX(-26px)}
+  .node.in .card{opacity:1;transform:none}
+  .label{font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;margin-bottom:.7rem;font-weight:500}
+  .card h2{font-family:'Fraunces',serif;font-weight:360;font-size:clamp(1.5rem,3vw,2.1rem);line-height:1.12;margin-bottom:.9rem}
+  .card p{color:var(--muted);font-weight:300;line-height:1.8}
+  .tags{margin-top:1.1rem;display:flex;gap:.5rem;flex-wrap:wrap}
+  .node:nth-child(odd) .tags{justify-content:flex-end}
+  .tag{font-size:.72rem;border:1px solid var(--line);border-radius:999px;padding:.3rem .8rem;color:var(--ink);background:#fffdf8}
+
+  /* ---------- CLASP / ENQUIRE ---------- */
+  .clasp{position:relative;z-index:1;text-align:center;padding:9vh 6vw 12vh}
+  .knot{width:74px;height:74px;margin:0 auto 2.4rem;border-radius:50%;
+        background:
+          radial-gradient(circle at 35% 30%, rgba(255,255,255,.9), transparent 45%),
+          radial-gradient(circle at 70% 75%, rgba(0,0,0,.3), transparent 55%),
+          var(--accent);
+        box-shadow:0 12px 26px -10px rgba(80,40,25,.6), inset 0 0 12px rgba(0,0,0,.2);
+        transform:scale(0);transition:transform .6s cubic-bezier(.34,1.56,.5,1)}
+  .clasp.in .knot{transform:scale(1)}
+  .clasp h2{font-family:'Fraunces',serif;font-weight:330;font-size:clamp(1.9rem,4vw,2.8rem);margin-bottom:1rem}
+  .clasp p{color:var(--muted);font-weight:300;line-height:1.8;max-width:42ch;margin:0 auto 2.4rem}
+  .actions{display:flex;gap:.9rem;justify-content:center;flex-wrap:wrap}
+  .btn{font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;padding:.9rem 1.7rem;border-radius:999px;
+       text-decoration:none;border:1px solid var(--ink);color:var(--ink);transition:background .3s,color .3s}
+  .btn.solid{background:var(--ink);color:var(--paper)}
+  .btn.solid:hover{background:transparent;color:var(--ink)}
+  .btn:hover{background:var(--ink);color:var(--paper)}
+
+  .note{position:fixed;left:50%;transform:translateX(-50%);bottom:14px;z-index:50;
+        background:#211d18;color:#f0e9da;font-size:.72rem;padding:.5rem 1rem;border-radius:30px;opacity:.9}
+
+  @media(max-width:760px){
+    .timeline{padding-left:34px}
+    .chain{left:18px}
+    .needle{left:18px}
+    .node{grid-template-columns:0 44px 1fr;min-height:0;padding:3.2vh 0}
+    .bead-wrap{grid-column:2}
+    .node:nth-child(odd) .card,.node:nth-child(even) .card{grid-column:3;justify-self:start;text-align:left;transform:translateX(-20px)}
+    .node:nth-child(odd) .tags{justify-content:flex-start}
+  }
+</style>
+</head>
+<body>
+
+  <section class="hero">
+    <div class="eyebrow">Private Events &amp; Workshops</div>
+    <h1>Let's make something <em>together.</em></h1>
+    <p>Personalised art &amp; craft experiences designed to entertain, engage, and inspire guests of all ages — tailored to the atmosphere of your celebration.</p>
+    <div class="hint">Thread the day</div>
+  </section>
+
+  <section class="timeline" id="timeline">
+    <svg class="needle" width="20" height="40" viewBox="0 0 20 40" fill="none" stroke="currentColor" stroke-width="1.4">
+      <ellipse cx="10" cy="7" rx="5" ry="7"/><line x1="10" y1="13" x2="10" y2="40"/>
+    </svg>
+    <div class="chain" id="chain"></div>
+
+    <div class="node">
+      <div class="card">
+        <div class="label" style="color:var(--c-red)">Beading workshops</div>
+        <h2>String your own keepsake.</h2>
+        <p>Guests create their own earrings, bracelets, necklaces and keyrings from a vibrant variety of beads and materials — a piece to take home.</p>
+        <div class="tags"><span class="tag">Bracelets</span><span class="tag">Earrings</span><span class="tag">Keyrings</span></div>
+      </div>
+      <div class="bead-wrap"><div class="bead big" style="--c:var(--c-red)"></div></div>
+    </div>
+
+    <div class="node">
+      <div class="bead-wrap"><div class="bead" style="--c:var(--c-cobalt)"></div></div>
+      <div class="card">
+        <div class="label" style="color:var(--c-cobalt)">Painting sessions</div>
+        <h2>Follow along, or find your own.</h2>
+        <p>A guided step-by-step artwork for everyone to follow — or open exploration with hands-on support and encouragement throughout.</p>
+        <div class="tags"><span class="tag">Guided</span><span class="tag">Free-paint</span><span class="tag">All materials</span></div>
+      </div>
+    </div>
+
+    <div class="node">
+      <div class="card">
+        <div class="label" style="color:var(--c-gold)">Face painting</div>
+        <h2>A little colour, a lot of joy.</h2>
+        <p>A playful, colourful addition that brings character and memorable entertainment for guests of every age.</p>
+        <div class="tags"><span class="tag">Kids</span><span class="tag">Parties</span></div>
+      </div>
+      <div class="bead-wrap"><div class="bead big" style="--c:var(--c-gold)"></div></div>
+    </div>
+
+    <div class="node">
+      <div class="bead-wrap"><div class="bead" style="--c:var(--c-green)"></div></div>
+      <div class="card">
+        <div class="label" style="color:var(--c-green)">For every occasion</div>
+        <h2>Shaped around your day.</h2>
+        <p>Private parties, celebrations and special occasions — each experience tailored to the atmosphere, audience and character of your event.</p>
+        <div class="tags"><span class="tag">Birthdays</span><span class="tag">Celebrations</span><span class="tag">All ages</span></div>
+      </div>
+    </div>
+
+    <div class="node">
+      <div class="card">
+        <div class="label" style="color:var(--c-plum)">How it works</div>
+        <h2>Simple to plan.</h2>
+        <p>Tell me the occasion, the ages, and the feeling you're after. I bring everything needed and tailor the session to suit — you just enjoy it.</p>
+      </div>
+      <div class="bead-wrap"><div class="bead big" style="--c:var(--c-plum)"></div></div>
+    </div>
+  </section>
+
+  <section class="clasp" id="clasp">
+    <div class="knot"></div>
+    <h2>Let's close the loop.</h2>
+    <p>For availability, bookings and tailored enquiries, get in touch — every event begins with a quick conversation.</p>
+    <div class="actions">
+      <a class="btn solid" href="#">Text / WhatsApp</a>
+      <a class="btn" href="#">Email Anna</a>
+    </div>
+  </section>
+
+  <div class="note">Mockup · Private Events — bead-chain scroll. Scroll slowly to thread it.</div>
+
+<script>
+  // reveal nodes + clasp
+  const io = new IntersectionObserver((es)=>{
+    es.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); } });
+  },{threshold:.35});
+  document.querySelectorAll('.node, .clasp').forEach(el=>io.observe(el));
+
+  // grow the bead chain as you scroll through the timeline
+  const tl = document.getElementById('timeline');
+  const chain = document.getElementById('chain');
+  const reduce = matchMedia('(prefers-reduced-motion:reduce)').matches;
+  function draw(){
+    if(reduce) return;
+    const r = tl.getBoundingClientRect();
+    const fill = Math.min(Math.max(window.innerHeight*0.55 - r.top, 0), tl.offsetHeight);
+    chain.style.height = fill + 'px';
+  }
+  draw();
+  addEventListener('scroll', draw, {passive:true});
+  addEventListener('resize', draw);
+</script>
+</body>
+</html>
