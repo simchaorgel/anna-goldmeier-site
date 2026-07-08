@@ -4,11 +4,11 @@ import '../styles/contact.css';
 import { getImage } from 'astro:assets';
 import type { ImageMetadata } from 'astro';
 
-const files = import.meta.glob<{ default: ImageMetadata }>('../assets/paintings/*.jpeg', { eager: true });
+const files = import.meta.glob<{ default: ImageMetadata }>('../assets/paintings/*.{jpeg,jpg}', { eager: true });
 const heroUrl = (await getImage({ src: files['../assets/paintings/18.jpeg'].default, width: 1920, format: 'webp', quality: 80 })).src;
 ---
 <Layout
-  nav="solid"
+  nav="page"
   title="Contact | Anna's Art Studio"
   description="Get in touch with Anna Goldmeier — enquiries, commissions, prints, jewellery, and private events."
 >

@@ -1,7 +1,7 @@
 // Single source of truth for painting metadata.
 // `file` matches the filename in src/assets/paintings/.
 // Add the rest of the collection here (with real titles from Anna) when we build the Gallery page.
-export const paintings = [
+const raw = [
 	{ file: '4.jpeg',  title: 'Serene Tree', medium: 'Oil on canvas' },
 	{ file: '2.jpeg',  title: 'Sea of Flowers', medium: 'Oil on canvas' },
 	{ file: '3.jpeg',  title: 'At the Kottel', medium: 'Oil on canvas' },
@@ -25,10 +25,21 @@ export const paintings = [
 	{ file: '22.jpeg', title: 'The Chafetz Chaim', medium: 'Oil on canvas' },
 	{ file: '23.jpeg', title: 'Sea of Galilee', medium: 'Oil on canvas' },
 	{ file: '1.jpeg',  title: 'Plant Life', medium: 'Pencil' },
+	{ file: '24.jpg', title: 'Evening Thoughts', medium: 'Oil on canvas' },
+	{ file: '25.jpg', title: 'Season coming', medium: 'Oil on canvas' },
+	{ file: '26.jpg', title: 'Kever Rachel', medium: 'Oil on canvas' },
+	{ file: '27.jpg', title: 'The Tree of Life', medium: 'Oil on canvas' },
 ];
 
-// Look up a painting's metadata by filename.
+// Turn a title into a URL-friendly slug for the enquiry route (e.g. 'Tulips & Oranges' → 'tulips-and-oranges').
+const slugify = (s) => s.toLowerCase().replace(/&/g, 'and').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+
+// Public list — each painting gets a stable `slug` derived from its title.
+export const paintings = raw.map((p) => ({ ...p, slug: slugify(p.title) }));
+
+// Look up a painting's metadata by filename, or by slug (used by the enquiry route).
 export const byFile = Object.fromEntries(paintings.map((p) => [p.file, p]));
+export const bySlug = Object.fromEntries(paintings.map((p) => [p.slug, p]));
 
 // Curated, ordered selections for the homepage (just filenames — titles come from the list above).
 export const heroOrder = ['19.jpeg', '23.jpeg', '18.jpeg', '14.jpeg', '11.jpeg', '6.jpeg'];

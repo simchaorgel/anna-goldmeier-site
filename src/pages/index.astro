@@ -9,7 +9,7 @@ import eventPhoto from '../assets/jewlery_event.jpeg';
 import { byFile, heroOrder, selectedOrder } from '../data/paintings.js';
 
 // bulk-import every painting file at once — keys look like '../assets/paintings/19.jpeg'
-const paintings = import.meta.glob<{ default: ImageMetadata }>('../assets/paintings/*.jpeg', { eager: true });
+const paintings = import.meta.glob<{ default: ImageMetadata }>('../assets/paintings/*.{jpeg,jpg}', { eager: true });
 
 // Pull the homepage selections from the shared data (order + titles live in one place).
 const selectedWorks = selectedOrder.map((file) => byFile[file]);

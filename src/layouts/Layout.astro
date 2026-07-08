@@ -86,24 +86,44 @@ const ogImage = new URL(image, Astro.site);
     </footer>
 
     <script>
-        const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
-        const parallax = () => {
-            const pbg = (window as any).__pbg;
-            if (pbg && !reduceMotion) pbg.style.transform = `translate3d(0, ${window.scrollY * 0.2}px, 0)`;
+
+        // --- nav: 'hero' (homepage) fades transparent→solid; 'page' (content) auto-hides down / reveals up ---
+        let lastY = window.scrollY;
+        let upAmount = 0;                             // accumulated up-scroll, so a jitter doesn't pop the nav
+        const REVEAL_AT = 50;                         // px of deliberate up-scroll before revealing
+        const updateNav = () => {
+            const nav = document.querySelector('.nav') as HTMLElement | null;
+            if (!nav) return;
+            const mode = document.body.dataset.nav;
+            const y = window.scrollY;
+            if (mode === 'hero') {
+                nav.classList.toggle('scrolled', y > window.innerHeight * 0.7);
+            } else if (mode === 'page') {
+                if (y <= 10) {                                             // at top → transparent, in-flow
+                    nav.classList.remove('scrolled', 'nav-hidden'); upAmount = 0;
+                } else if (y > lastY) {                                    // scrolling down
+                    upAmount = 0;
+                    // only slide-hide the revealed (fixed) bar; the transparent in-flow bar just scrolls away
+                    if (nav.classList.contains('scrolled')) nav.classList.add('nav-hidden');
+                } else if (y < lastY) {                                    // scrolling up
+                    upAmount += lastY - y;
+                    if (upAmount > REVEAL_AT) {
+                        if (nav.classList.contains('scrolled')) {
+                            nav.classList.remove('nav-hidden');            // already fixed → slide back down
+                        } else {
+                            // first reveal from the in-flow bar: pin it off-screen, reflow, then slide in
+                            nav.classList.add('scrolled', 'nav-hidden');
+                            void nav.offsetHeight;
+                            nav.classList.remove('nav-hidden');
+                        }
+                    }
+                }
+            }
+            lastY = y;
         };
 
         // --- global listeners: registered ONCE for the whole session ---
-        window.addEventListener('scroll', () => {
-            const nav = document.querySelector('.nav');
-            if (nav) {
-                const mode = document.body.dataset.nav;
-                if (mode !== 'solid') {              // solid stays solid (class set in markup)
-                    const trigger = mode === 'hero' ? window.innerHeight * 0.7 : 8;
-                    nav.classList.toggle('scrolled', window.scrollY > trigger);
-                }
-            }
-            parallax();                              // drifts any .page-hero-bg on the page
-        }, { passive: true });
+        window.addEventListener('scroll', () => { updateNav(); }, { passive: true });
 
         document.addEventListener('keydown', (e) => {
             if (e.key !== 'Escape') return;
@@ -117,17 +137,15 @@ const ogImage = new URL(image, Astro.site);
 
         // --- per-page setup: runs on first load AND after every view transition ---
         document.addEventListener('astro:page-load', () => {
-            // banner parallax target for this page (if any)
-            (window as any).__pbg = document.querySelector('.page-hero-bg');
-            parallax();
-            // nav initial state for this page
+            // nav initial state for this page (never hidden on load)
+            lastY = window.scrollY;
+            upAmount = 0;
             const nav = document.querySelector('.nav');
             if (nav) {
                 const mode = document.body.dataset.nav;
-                if (mode !== 'solid') {
-                    const trigger = mode === 'hero' ? window.innerHeight * 0.7 : 8;
-                    nav.classList.toggle('scrolled', window.scrollY > trigger);
-                }
+                nav.classList.remove('nav-hidden');
+                if (mode === 'hero') nav.classList.toggle('scrolled', window.scrollY > window.innerHeight * 0.7);
+                else if (mode === 'page') nav.classList.toggle('scrolled', window.scrollY > 10);
             }
             // mobile menu (elements are fresh after each navigation → no stacking)
             const burger = document.querySelector('.burger');

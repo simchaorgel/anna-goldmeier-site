@@ -1,0 +1,132 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import '../../styles/contact.css';
+import '../../styles/enquire.css';
+import { Image, getImage } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+import { paintings } from '../../data/paintings.js';
+
+export function getStaticPaths() {
+  return paintings.map((p) => ({ params: { slug: p.slug }, props: { painting: p } }));
+}
+
+const { painting } = Astro.props;
+const files = import.meta.glob<{ default: ImageMetadata }>('../../assets/paintings/*.{jpeg,jpg}', { eager: true });
+const img = files[`../../assets/paintings/${painting.file}`].default;
+// soft, blurred backdrop drawn from the same painting — its own colours bathe the page
+const bgUrl = (await getImage({ src: img, width: 1600, format: 'webp', quality: 65 })).src;
+---
+<Layout
+  nav="page"
+  title={`Enquire — ${painting.title} | Anna's Art Studio`}
+  description={`Enquire about "${painting.title}" by Anna Goldmeier — an original oil painting, also available as a fine-art print. Sizing and pricing arranged by email.`}
+>
+  <main class="enquiry-body">
+    <div class="enq-bg" style={`background-image:url('${bgUrl}')`}></div>
+
+    <div class="enq-shell">
+      <a class="enq-back" href="/gallery">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+        Back to the collection
+      </a>
+
+      <div class="enq-pane">
+        <figure class="enq-piece">
+          <Image class="enq-img" src={img} alt={painting.title} widths={[600, 900, 1200]} sizes="(max-width: 820px) 88vw, 48vw" />
+          <figcaption class="enq-head">
+            <h1>{painting.title}</h1>
+            <p class="enq-medium">{painting.medium}</p>
+          </figcaption>
+        </figure>
+
+        <div class="enq-panel">
+        <form class="contact-form enquiry-form" id="enquiryForm" name="enquiry" method="POST" data-netlify="true" netlify-honeypot="bot-field">
+          <input type="hidden" name="form-name" value="enquiry" />
+          <input type="hidden" name="painting" value={`${painting.title} (${painting.file})`} />
+          <p class="hp"><label>Leave this empty if you're human: <input name="bot-field" /></label></p>
+
+          <div class="field">
+            <span class="field-label">I'm interested in</span>
+            <div class="toggle" role="radiogroup" aria-label="Original or print">
+              <input type="radio" id="opt-original" name="interest" value="Original" checked />
+              <label for="opt-original">The original</label>
+              <input type="radio" id="opt-print" name="interest" value="Print" />
+              <label for="opt-print">A print</label>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="name">Name</label>
+            <input id="name" name="name" type="text" autocomplete="name" required />
+          </div>
+          <div class="field">
+            <label for="contact">Email or phone / WhatsApp</label>
+            <input id="contact" name="contact" type="text" required />
+          </div>
+          <div class="field">
+            <label for="comment">Comment <span class="opt">(optional)</span></label>
+            <textarea id="comment" name="comment"></textarea>
+          </div>
+
+          <button class="form-submit" type="submit">Send enquiry</button>
+        </form>
+
+        <div class="form-thanks" id="enquiryThanks">
+          <h2>Thank you</h2>
+          <p>Your enquiry about <em>{painting.title}</em> has been sent — Anna will be in touch soon about availability, sizing and pricing.</p>
+          <a class="enq-back" href="/gallery">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+            Back to the collection
+          </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script is:inline>
+    if (!window.__enquiryReg) {
+      window.__enquiryReg = true;
+      document.addEventListener('astro:page-load', () => {
+        const form = document.getElementById('enquiryForm');
+        if (!form) return;
+
+        // preselect the Print option when arrived via /enquire/<slug>?type=print
+        const type = new URLSearchParams(location.search).get('type');
+        if (type === 'print') {
+          const print = document.getElementById('opt-print');
+          if (print) print.checked = true;
+        }
+
+        // contact must be a valid email OR a phone number (at least 7 digits)
+        const contact = document.getElementById('contact');
+        const validateContact = () => {
+          const v = contact.value.trim();
+          const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+          const digits = (v.match(/\d/g) || []).length;
+          const isPhone = /^[+()\-.\s\d]+$/.test(v) && digits >= 7;
+          contact.setCustomValidity(v === '' || isEmail || isPhone ? '' : 'Please enter a valid email address, or a phone number.');
+        };
+        contact.addEventListener('input', validateContact);
+
+        form.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          validateContact();
+          if (!form.checkValidity()) { form.reportValidity(); return; }
+          try {
+            const data = new FormData(form);
+            await fetch('/', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+              body: new URLSearchParams(data).toString(),
+            });
+          } catch (err) { /* still show thanks; Netlify queues the submission */ }
+          form.style.display = 'none';
+          const thanks = document.getElementById('enquiryThanks');
+          if (thanks) thanks.classList.add('show');
+          thanks && thanks.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        });
+      });
+    }
+  </script>
+</Layout>

@@ -10,16 +10,36 @@ body{font-family:'Inter',sans-serif;color:#fff;background:#100e0c;overflow-x:hid
 body:not([data-nav="hero"]){background:var(--paper);color:var(--ink)}
 ::selection{background:rgba(179,157,219,.5)}
 
+/* subtle site-wide scrollbar — light track everywhere (incl. the dark homepage) */
+html{scrollbar-width:thin;scrollbar-color:rgba(124,115,106,.5) var(--paper)}
+::-webkit-scrollbar{width:11px;height:11px}
+::-webkit-scrollbar-track{background:var(--paper)}
+::-webkit-scrollbar-thumb{background-color:rgba(124,115,106,.42);border-radius:999px;
+    border:3px solid var(--paper);background-clip:content-box}
+::-webkit-scrollbar-thumb:hover{background-color:rgba(124,115,106,.62)}
+
 /* ---- nav / header ---- */
 .nav{position:fixed;top:0;left:0;right:0;z-index:40;display:flex;justify-content:space-between;align-items:center;
     padding:1.4rem clamp(1.4rem,5vw,3.5rem);
     background:transparent;border-bottom:1px solid transparent;
-    transition:background .4s ease,border-color .4s ease,padding .4s ease}
+    transition:background .4s ease,border-color .4s ease,padding .4s ease,transform .45s cubic-bezier(.4,.7,.2,1)}
 .nav.scrolled{background:var(--paper);border-bottom-color:var(--line);padding-top:1rem;padding-bottom:1rem}
-/* wordmark — only visible once the nav has a background */
+/* content-page nav auto-hides on scroll-down, reveals on scroll-up */
+.nav.nav-hidden{transform:translateY(-100%)}
+/* content pages: the transparent bar sits in-flow and scrolls away with the page;
+   only the revealed / hiding bar is fixed to the top */
+body[data-nav="page"] .nav{position:absolute}
+body[data-nav="page"] .nav.scrolled,
+body[data-nav="page"] .nav.nav-hidden{position:fixed}
+/* wordmark — visible on every page except the homepage's transparent top state */
 .brand{font-family:'Fraunces',serif;font-size:1.15rem;color:var(--ink);text-decoration:none;letter-spacing:.01em;
-    opacity:0;pointer-events:none;transition:opacity .4s ease}
-.nav.scrolled .brand{opacity:1;pointer-events:auto}
+    opacity:1;pointer-events:auto;transition:opacity .4s ease,color .4s ease}
+.nav:not(.scrolled) .brand{color:#fff;text-shadow:0 1px 14px rgba(0,0,0,.55)}
+.nav.scrolled .brand{color:var(--ink);text-shadow:none}
+body[data-nav="hero"] .nav:not(.scrolled) .brand{opacity:0;pointer-events:none}
+/* page-mode bar slides in already-solid → snap text colour instead of fading white→ink */
+body[data-nav="page"] .nav .brand{transition:opacity .4s ease}
+body[data-nav="page"] .nav .links a{transition:opacity .25s}
 .links{display:flex;gap:2.2rem;font-size:.95rem;letter-spacing:.05em}
 .links a{position:relative;color:#fff;text-decoration:none;opacity:.92;
         transition:opacity .25s,color .4s ease;text-shadow:0 1px 14px rgba(0,0,0,.55);padding-bottom:3px}
