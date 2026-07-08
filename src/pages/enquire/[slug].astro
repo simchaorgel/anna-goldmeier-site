@@ -13,11 +13,12 @@ export function getStaticPaths() {
 const { painting } = Astro.props;
 const files = import.meta.glob<{ default: ImageMetadata }>('../../assets/paintings/*.{jpeg,jpg}', { eager: true });
 const img = files[`../../assets/paintings/${painting.file}`].default;
-// soft, blurred backdrop drawn from the same painting — its own colours bathe the page
-const bgUrl = (await getImage({ src: img, width: 1600, format: 'webp', quality: 65 })).src;
+// the painting itself fills the screen (darkened for legibility); the enquiry sits over it
+const bgUrl = (await getImage({ src: img, width: 1920, format: 'webp', quality: 78 })).src;
 ---
 <Layout
   nav="page"
+  footer="transparent"
   title={`Enquire — ${painting.title} | Anna's Art Studio`}
   description={`Enquire about "${painting.title}" by Anna Goldmeier — an original oil painting, also available as a fine-art print. Sizing and pricing arranged by email.`}
 >
@@ -25,11 +26,6 @@ const bgUrl = (await getImage({ src: img, width: 1600, format: 'webp', quality: 
     <div class="enq-bg" style={`background-image:url('${bgUrl}')`}></div>
 
     <div class="enq-shell">
-      <a class="enq-back" href="/gallery">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
-        Back to the collection
-      </a>
-
       <div class="enq-pane">
         <figure class="enq-piece">
           <Image class="enq-img" src={img} alt={painting.title} widths={[600, 900, 1200]} sizes="(max-width: 820px) 88vw, 48vw" />
@@ -46,6 +42,14 @@ const bgUrl = (await getImage({ src: img, width: 1600, format: 'webp', quality: 
           <p class="hp"><label>Leave this empty if you're human: <input name="bot-field" /></label></p>
 
           <div class="field">
+            <label for="name">Name</label>
+            <input id="name" name="name" type="text" autocomplete="name" required />
+          </div>
+          <div class="field">
+            <label for="contact">Email or phone / WhatsApp</label>
+            <input id="contact" name="contact" type="text" required />
+          </div>
+          <div class="field">
             <span class="field-label">I'm interested in</span>
             <div class="toggle" role="radiogroup" aria-label="Original or print">
               <input type="radio" id="opt-original" name="interest" value="Original" checked />
@@ -53,15 +57,6 @@ const bgUrl = (await getImage({ src: img, width: 1600, format: 'webp', quality: 
               <input type="radio" id="opt-print" name="interest" value="Print" />
               <label for="opt-print">A print</label>
             </div>
-          </div>
-
-          <div class="field">
-            <label for="name">Name</label>
-            <input id="name" name="name" type="text" autocomplete="name" required />
-          </div>
-          <div class="field">
-            <label for="contact">Email or phone / WhatsApp</label>
-            <input id="contact" name="contact" type="text" required />
           </div>
           <div class="field">
             <label for="comment">Comment <span class="opt">(optional)</span></label>

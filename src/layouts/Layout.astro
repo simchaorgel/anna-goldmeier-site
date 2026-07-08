@@ -2,7 +2,8 @@
 import '../styles/global.css';
 import { ClientRouter } from 'astro:transitions';
 const {
-  nav = "hero",   // "hero" | "scroll" | "solid"
+  nav = "hero",   // "hero" | "page" | "solid"
+  footer = "solid",   // "solid" | "transparent" (transparent also darkens the page base)
   title = "Anna's Art Studio",
   description = "Original paintings, fine-art prints, handcrafted jewellery, and creative events by Anna Goldmeier — rooted in nature, emotion, and vibrant colour.",
   image = "/OG.jpeg",   // social share image (override per page); add public/og.jpeg
@@ -47,7 +48,7 @@ const ogImage = new URL(image, Astro.site);
     <ClientRouter />
 </head>
 
-<body data-nav={nav}>
+<body data-nav={nav} data-footer={footer}>
     <!-- Header  -->
     <nav class:list={["nav", { scrolled: nav === "solid" }]}>
         <a class="brand" href="/">Anna's Art Studio</a>

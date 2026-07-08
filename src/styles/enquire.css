@@ -1,13 +1,16 @@
 /* ====================================================================
    ENQUIRE — per-painting enquiry page (image + form)
    ==================================================================== */
-.enquiry-body{position:relative;min-height:100vh;display:flex;align-items:center;justify-content:center;
-    padding:clamp(5.5rem,12vh,8rem) clamp(1.2rem,5vw,3rem) clamp(3rem,7vh,5rem)}
+.enquiry-body{position:relative;min-height:100vh;display:flex;align-items:center;justify-content:center;overflow:hidden;
+    padding:clamp(7rem,16vh,11rem) clamp(1.2rem,5vw,3rem)}
 
 /* the selected painting, blurred + darkened, bathes the whole screen in its own colour */
-.enq-bg{position:fixed;inset:0;z-index:0;background-size:cover;background-position:center;
-    filter:blur(38px) brightness(.5) saturate(1.15);transform:scale(1.18)}
+.enq-bg{position:absolute;inset:0;z-index:0;background-size:cover;background-position:center;
+    filter:blur(10px) brightness(.5) saturate(1.15);transform:scale(1.18)}
 .enq-bg::after{content:"";position:absolute;inset:0;background:radial-gradient(120% 90% at 50% 40%, rgba(15,11,8,.25), rgba(15,11,8,.6))}
+/* fade the backdrop into the dark base at the bottom, so the transparent footer joins seamlessly */
+.enquiry-body::after{content:"";position:absolute;left:0;right:0;bottom:0;height:22vh;z-index:0;pointer-events:none;
+    background:linear-gradient(to bottom, transparent, #100e0c)}
 
 .enq-shell{position:relative;z-index:1;width:100%;max-width:940px}
 .enq-back{display:inline-flex;align-items:center;gap:.4rem;margin-bottom:1.1rem;
@@ -18,8 +21,8 @@
 .enq-shell > .enq-back:hover{color:#fff}
 
 /* the floating pane */
-.enq-pane{display:grid;grid-template-columns:1.08fr .92fr;gap:clamp(2rem,4vw,3.5rem);align-items:center;
-    background:var(--paper);border-radius:6px;padding:clamp(1.6rem,3vw,2.8rem);
+.enq-pane{display:grid;grid-template-columns:1fr 1fr;gap:clamp(1.6rem,3.2vw,2.8rem);align-items:start;
+    background:var(--paper);border-radius:6px;padding:clamp(1.5rem,2.6vw,2.4rem);
     box-shadow:0 50px 120px -40px rgba(0,0,0,.7)}
 
 /* the piece — no frame, image leads */
@@ -32,7 +35,7 @@
 .enq-head h1{font-family:'Fraunces',serif;font-weight:340;font-size:clamp(1.9rem,3.6vw,2.7rem);line-height:1.08;color:var(--ink)}
 .enq-medium{margin-top:.5rem;font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;color:var(--muted)}
 
-.enquiry-form{gap:clamp(1.5rem,3.4vh,2rem)}
+.enquiry-form{gap:clamp(1.1rem,2.6vh,1.5rem)}
 .field-label{font-family:'Fraunces',serif;font-style:italic;font-size:1.02rem;color:var(--ink)}
 .field .opt{font-family:'Inter',sans-serif;font-style:normal;font-size:.8rem;color:var(--muted);letter-spacing:0}
 

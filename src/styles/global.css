@@ -8,6 +8,8 @@ html{scroll-behavior:smooth}
 body{font-family:'Inter',sans-serif;color:#fff;background:#100e0c;overflow-x:hidden}
 /* content pages (non-hero) sit on paper, so any scrollbar gutter / overscroll is light, not black */
 body:not([data-nav="hero"]){background:var(--paper);color:var(--ink)}
+/* transparent-footer pages run on a dark immersive field */
+body[data-footer="transparent"]{background:#100e0c}
 ::selection{background:rgba(179,157,219,.5)}
 
 /* subtle site-wide scrollbar — light track everywhere (incl. the dark homepage) */
@@ -37,9 +39,9 @@ body[data-nav="page"] .nav.nav-hidden{position:fixed}
 .nav:not(.scrolled) .brand{color:#fff;text-shadow:0 1px 14px rgba(0,0,0,.55)}
 .nav.scrolled .brand{color:var(--ink);text-shadow:none}
 body[data-nav="hero"] .nav:not(.scrolled) .brand{opacity:0;pointer-events:none}
-/* page-mode bar slides in already-solid → snap text colour instead of fading white→ink */
-body[data-nav="page"] .nav .brand{transition:opacity .4s ease}
-body[data-nav="page"] .nav .links a{transition:opacity .25s}
+/* page-mode bar slides in already-solid → snap text colour/opacity (motion comes from the bar's transform) */
+body[data-nav="page"] .nav .brand,
+body[data-nav="page"] .nav .links a{transition:none}
 .links{display:flex;gap:2.2rem;font-size:.95rem;letter-spacing:.05em}
 .links a{position:relative;color:#fff;text-decoration:none;opacity:.92;
         transition:opacity .25s,color .4s ease;text-shadow:0 1px 14px rgba(0,0,0,.55);padding-bottom:3px}
@@ -123,6 +125,16 @@ body.menu-open{overflow:hidden}
 .to-top{font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);text-decoration:none;
     margin-left:.4rem;transition:color .25s}
 .to-top:hover{color:var(--ink)}
+
+/* transparent footer variant (immersive dark pages) — sits on the dark base, light text */
+body[data-footer="transparent"] .site-footer{background:transparent;border-top-color:transparent;color:#fff}
+body[data-footer="transparent"] .foot-copy,
+body[data-footer="transparent"] .to-top{color:rgba(255,255,255,.6)}
+body[data-footer="transparent"] .to-top:hover{color:#fff}
+body[data-footer="transparent"] .foot-btn{border-color:rgba(255,255,255,.5);color:#fff}
+body[data-footer="transparent"] .foot-btn:hover{background:#fff;color:var(--ink)}
+body[data-footer="transparent"] .foot-btn.solid{background:#fff;color:var(--ink);border-color:#fff}
+body[data-footer="transparent"] .foot-btn.solid:hover{background:transparent;color:#fff}
 @media(max-width:560px){
     .site-footer{flex-direction:column;align-items:stretch;gap:1rem}
     .foot-right{width:100%}
