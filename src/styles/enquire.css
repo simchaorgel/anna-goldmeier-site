@@ -6,7 +6,7 @@
 
 /* the selected painting, blurred + darkened, bathes the whole screen in its own colour */
 .enq-bg{position:absolute;inset:0;z-index:0;background-size:cover;background-position:center;
-    filter:blur(10px) brightness(.5) saturate(1.15);transform:scale(1.18)}
+    filter:blur(5px) brightness(.5) saturate(1.15);transform:scale(1.18)}
 .enq-bg::after{content:"";position:absolute;inset:0;background:radial-gradient(120% 90% at 50% 40%, rgba(15,11,8,.25), rgba(15,11,8,.6))}
 /* fade the backdrop into the dark base at the bottom, so the transparent footer joins seamlessly */
 .enquiry-body::after{content:"";position:absolute;left:0;right:0;bottom:0;height:22vh;z-index:0;pointer-events:none;
