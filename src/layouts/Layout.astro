@@ -112,9 +112,11 @@ const ogImage = new URL(image, Astro.site);
                         if (nav.classList.contains('scrolled')) {
                             nav.classList.remove('nav-hidden');            // already fixed → slide back down
                         } else {
-                            // first reveal from the in-flow bar: pin it off-screen, reflow, then slide in
+                            // first reveal from the in-flow bar: pin it off-screen with no transition, then slide in
+                            nav.style.transition = 'none';
                             nav.classList.add('scrolled', 'nav-hidden');
-                            void nav.offsetHeight;
+                            void nav.offsetHeight;                       // flush — bar is now truly at -100%
+                            nav.style.transition = '';                   // restore the stylesheet transition
                             nav.classList.remove('nav-hidden');
                         }
                     }
