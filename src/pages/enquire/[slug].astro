@@ -13,29 +13,31 @@ export function getStaticPaths() {
 const { painting } = Astro.props;
 const files = import.meta.glob<{ default: ImageMetadata }>('../../assets/paintings/*.{jpeg,jpg}', { eager: true });
 const img = files[`../../assets/paintings/${painting.file}`].default;
-// the painting itself fills the screen (darkened for legibility); the enquiry sits over it
-const bgUrl = (await getImage({ src: img, width: 1920, format: 'webp', quality: 78 })).src;
+// frame the page with a *different* painting (the previous one in the collection, wrapping around):
+// keeps it unique per page and avoids showing the selected piece twice
+const idx = paintings.findIndex((p) => p.slug === painting.slug);
+const bgPainting = paintings[(idx - 1 + paintings.length) % paintings.length];
+const bgImg = files[`../../assets/paintings/${bgPainting.file}`].default;
+const bgUrl = (await getImage({ src: bgImg, width: 1920, format: 'webp', quality: 80 })).src;
 ---
 <Layout
   nav="page"
-  footer="transparent"
   title={`Enquire — ${painting.title} | Anna's Art Studio`}
   description={`Enquire about "${painting.title}" by Anna Goldmeier — an original oil painting, also available as a fine-art print. Sizing and pricing arranged by email.`}
 >
   <main class="enquiry-body">
     <div class="enq-bg" style={`background-image:url('${bgUrl}')`}></div>
 
-    <div class="enq-shell">
-      <div class="enq-pane canvas-texture">
-        <figure class="enq-piece">
-          <Image class="enq-img" src={img} alt={painting.title} widths={[600, 900, 1200]} sizes="(max-width: 820px) 88vw, 48vw" />
-          <figcaption class="enq-head">
-            <h1>{painting.title}</h1>
-            <p class="enq-medium">{painting.medium}</p>
-          </figcaption>
-        </figure>
+    <div class="enq-pane canvas-texture">
+      <figure class="enq-piece">
+        <Image class="enq-img" src={img} alt={painting.title} widths={[600, 900, 1200]} sizes="(max-width: 820px) 82vw, 52vw" />
+      </figure>
 
-        <div class="enq-panel">
+      <div class="enq-panel">
+        <header class="enq-head">
+          <h1>{painting.title}</h1>
+          <p class="enq-medium">{painting.medium}</p>
+        </header>
         <form class="contact-form enquiry-form" id="enquiryForm" name="enquiry" method="POST" data-netlify="true" netlify-honeypot="bot-field">
           <input type="hidden" name="form-name" value="enquiry" />
           <input type="hidden" name="painting" value={`${painting.title} (${painting.file})`} />
@@ -71,7 +73,6 @@ const bgUrl = (await getImage({ src: img, width: 1920, format: 'webp', quality: 
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
             Back to the collection
           </a>
-          </div>
         </div>
       </div>
     </div>

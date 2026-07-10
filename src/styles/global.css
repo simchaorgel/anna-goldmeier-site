@@ -127,7 +127,8 @@ body.menu-open{overflow:hidden}
 .to-top:hover{color:var(--ink)}
 
 /* transparent footer variant (immersive dark pages) — sits on the dark base, light text */
-body[data-footer="transparent"] .site-footer{background:transparent;border-top-color:transparent;color:#fff}
+body[data-footer="transparent"] .site-footer{background:transparent;border-top-color:transparent;color:#fff;
+    text-shadow:0 1px 14px rgba(0,0,0,.55)}
 body[data-footer="transparent"] .foot-copy,
 body[data-footer="transparent"] .to-top{color:rgba(255,255,255,.6)}
 body[data-footer="transparent"] .to-top:hover{color:#fff}

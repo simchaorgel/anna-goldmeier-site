@@ -92,6 +92,7 @@ const ogImage = new URL(image, Astro.site);
         let lastY = window.scrollY;
         let upAmount = 0;                             // accumulated up-scroll, so a jitter doesn't pop the nav
         const REVEAL_AT = 50;                         // px of deliberate up-scroll before revealing
+        const NEAR_TOP = 200;                         // this close to the top, skip the fixed reveal — the in-flow bar arrives anyway
         const updateNav = () => {
             const nav = document.querySelector('.nav') as HTMLElement | null;
             if (!nav) return;
@@ -108,7 +109,7 @@ const ogImage = new URL(image, Astro.site);
                     if (nav.classList.contains('scrolled')) nav.classList.add('nav-hidden');
                 } else if (y < lastY) {                                    // scrolling up
                     upAmount += lastY - y;
-                    if (upAmount > REVEAL_AT) {
+                    if (upAmount > REVEAL_AT && y > NEAR_TOP) {
                         if (nav.classList.contains('scrolled')) {
                             nav.classList.remove('nav-hidden');            // already fixed → slide back down
                         } else {
