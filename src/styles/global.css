@@ -4,7 +4,7 @@
    ==================================================================== */
 :root{ --paper:#f4f0e9; --paper2:#efe7da; --ink:#1c1a17; --muted:#7c736a; --line:#ddd5c8; --accent:#9c3f2e; }
 *{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth}
+html{scroll-behavior:smooth;-webkit-tap-highlight-color:transparent}
 body{font-family:'Inter',sans-serif;color:#fff;background:#100e0c;overflow-x:hidden}
 /* content pages (non-hero) sit on paper, so any scrollbar gutter / overscroll is light, not black */
 body:not([data-nav="hero"]){background:var(--paper);color:var(--ink)}
