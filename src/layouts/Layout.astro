@@ -57,7 +57,7 @@ const ogImage = new URL(image, Astro.site);
     </nav>
 
     <!-- Phone menu modal -->
-    <div class="menu" id="menu" aria-hidden="true">
+    <div class="menu" id="menu" inert>
         <button class="close" aria-label="Close menu">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
         </button>
@@ -135,7 +135,7 @@ const ogImage = new URL(image, Astro.site);
             if (menu && menu.classList.contains('open')) {
                 menu.classList.remove('open');
                 document.body.classList.remove('menu-open');
-                menu.setAttribute('aria-hidden', 'true');
+                menu.setAttribute('inert', '');
             }
         });
 
@@ -158,11 +158,22 @@ const ogImage = new URL(image, Astro.site);
                 const setMenu = (open: boolean) => {
                     menu.classList.toggle('open', open);
                     document.body.classList.toggle('menu-open', open);
-                    menu.setAttribute('aria-hidden', String(!open));
+                    menu.toggleAttribute('inert', !open);
                     burger.setAttribute('aria-expanded', String(open));
                 };
                 burger.addEventListener('click', () => setMenu(true));
-                menu.addEventListener('click', () => setMenu(false));
+                menu.addEventListener('click', (e) => {
+                    // nav-link tap → close instantly (no fade), so the view
+                    // transition doesn't snapshot a half-faded overlay
+                    if ((e.target as Element).closest('a')) {
+                        menu.style.transition = 'none';
+                        setMenu(false);
+                        void menu.offsetHeight;
+                        menu.style.transition = '';
+                    } else {
+                        setMenu(false);
+                    }
+                });
             }
         });
     </script>
