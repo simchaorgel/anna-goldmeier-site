@@ -2,7 +2,7 @@
    PRIVATE EVENTS — intro + experiences + booking CTA
    ==================================================================== */
 .events-body{position:relative;z-index:2;background:var(--paper);
-    padding:0 clamp(1.4rem,6vw,4rem) clamp(4rem,9vh,6rem)}
+    padding:0 0 clamp(4rem,9vh,6rem)}
 
 /* shared painting behind the title + framed intro (one continuous image) */
 .ev-top{position:relative;background-size:cover;background-position:center top}
@@ -44,7 +44,7 @@
 .ev-jump-chev svg{width:20px;height:20px;display:block}
 
 /* standalone framed band with its own painting (beading, jewellery…) */
-.ev-band{position:relative;width:100vw;margin-left:calc(50% - 50vw);scroll-margin-top:90px;
+.ev-band{position:relative;margin-top:-1px;scroll-margin-top:90px;
     background-size:cover;background-position:center;padding:clamp(1rem,3vw,2.6rem)}
 .ev-band::before{content:"";position:absolute;inset:0;pointer-events:none;
     background:linear-gradient(#131009,rgba(14,11,8,.5) clamp(110px,17vh,180px),
@@ -89,7 +89,7 @@
 .ev-card p{color:#4a443c;font-weight:300;line-height:1.7;font-size:.95rem}
 
 /* booking cta */
-.ev-cta{max-width:680px;margin:clamp(3.5rem,9vh,6rem) auto 0;text-align:center}
+.ev-cta{max-width:680px;margin:clamp(3.5rem,9vh,6rem) auto 0;padding:0 clamp(1.4rem,6vw,4rem);text-align:center}
 .ev-cta h2{font-family:'Fraunces',serif;font-weight:330;font-size:clamp(1.8rem,3.6vw,2.5rem);color:var(--ink);margin-bottom:.8rem}
 .ev-cta p{color:#4a443c;font-weight:300;line-height:1.7;margin-bottom:1.6rem}
 .ev-cta-row{display:flex;gap:.9rem;justify-content:center;flex-wrap:wrap}
@@ -103,4 +103,9 @@
 @media(max-width:820px){
 .ev-intro{grid-template-columns:1fr;gap:1.6rem}
 .ev-cards{grid-template-columns:1fr;max-width:460px}
+.ev-btn{white-space:normal}
+}
+
+@media(max-width:560px){
+.ev-jumps{grid-template-columns:1fr}
 }

@@ -9,18 +9,20 @@ const heroUrl = (await getImage({ src: files['../assets/paintings/18.jpeg'].defa
 ---
 <Layout
   nav="page"
+  footer="transparent"
   title="Contact | Anna's Art Studio"
   description="Get in touch with Anna Goldmeier — enquiries, commissions, prints, jewellery, and private events."
 >
+  <div class="ct-top" style={`background-image:url('${heroUrl}')`}>
   <section class="page-hero">
-    <div class="page-hero-bg" style={`background-image:url('${heroUrl}')`}></div>
     <div class="page-hero-inner">
       <h1>Get in Touch</h1>
       <p>Reach out to purchase an original, a print, to book an event, or for general enquiries.</p>
     </div>
   </section>
 
-  <main class="contact-body canvas-texture">
+  <main class="ct-frame">
+    <div class="ct-frame-inner canvas-texture">
     <div class="contact-grid">
       <div class="contact-main">
         <form class="contact-form" id="contactForm" name="contact" method="POST" data-netlify="true" netlify-honeypot="bot-field">
@@ -63,7 +65,9 @@ const heroUrl = (await getImage({ src: files['../assets/paintings/18.jpeg'].defa
         </div>
       </aside>
     </div>
+    </div>
   </main>
+  </div>
 
   <script is:inline>
     if (!window.__contactReg) {

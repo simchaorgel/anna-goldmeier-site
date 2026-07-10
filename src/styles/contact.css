@@ -1,8 +1,20 @@
 /* ====================================================================
    CONTACT — enquiry form + direct details
    ==================================================================== */
-.contact-body{position:relative;z-index:2;background:var(--paper);
-    padding:clamp(3.5rem,9vh,6rem) clamp(1.4rem,6vw,4rem) clamp(4rem,9vh,6rem)}
+/* painting backdrop shared by the hero + framed panel (same pattern as events) */
+.ct-top{position:relative;background-size:cover;background-position:center top}
+.ct-top::before{content:"";position:absolute;inset:0;pointer-events:none;
+    background:linear-gradient(rgba(14,11,8,.5),
+        rgba(14,11,8,.44) calc(100% - clamp(110px,17vh,180px)),#100e0c)}
+.ct-top .page-hero{background:transparent;min-height:auto;
+    padding-top:clamp(5.5rem,13vh,8rem);padding-bottom:clamp(1.4rem,4vh,2.6rem)}
+.ct-top .page-hero::before{display:none}
+
+/* framed paper panel floating on the painting */
+.ct-frame{position:relative;z-index:1;padding:clamp(1rem,3vw,2.6rem) clamp(1rem,3vw,2.6rem) clamp(2.2rem,6vh,4rem)}
+.ct-frame-inner{position:relative;isolation:isolate;max-width:1100px;margin:0 auto;background:var(--paper);
+    padding:clamp(2.6rem,5vw,4rem) clamp(2rem,5vw,4.5rem)}
+
 .contact-grid{max-width:1000px;margin:0 auto;display:grid;grid-template-columns:1.35fr .65fr;
     gap:clamp(2.5rem,6vw,5rem);align-items:start}
 
@@ -45,4 +57,5 @@
 .contact-grid{grid-template-columns:1fr;gap:2.6rem}
 .form-submit{align-self:stretch}
 .contact-aside{text-align:center}
+.contact-aside h2{font-size:1.75rem}
 }
