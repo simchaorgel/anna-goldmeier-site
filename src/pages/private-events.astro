@@ -21,21 +21,24 @@ const beadingShots = [
 
 const files = import.meta.glob<{ default: ImageMetadata }>('../assets/paintings/*.{jpeg,jpg}', { eager: true });
 const heroUrl = (await getImage({ src: files['../assets/paintings/15.jpeg'].default, width: 1920, format: 'webp', quality: 80 })).src;
+const beadingBgUrl = (await getImage({ src: files['../assets/paintings/19.jpeg'].default, width: 1920, format: 'webp', quality: 80 })).src;
+const paintingBgUrl = (await getImage({ src: files['../assets/paintings/23.jpeg'].default, width: 1920, format: 'webp', quality: 80 })).src;
 ---
 <Layout
   nav="page"
   title="Private Events | Anna's Art Studio"
   description="Hands-on art, craft, and face-painting experiences by Anna Goldmeier for parties, celebrations, and special occasions."
 >
+  <div class="ev-top" style={`background-image:url('${heroUrl}')`}>
   <section class="page-hero">
-    <div class="page-hero-bg" style={`background-image:url('${heroUrl}')`}></div>
     <div class="page-hero-inner">
       <h1>Private Events</h1>
       <p>Hands-on art, craft, and face-painting experiences for parties and celebrations.</p>
     </div>
   </section>
 
-  <main class="events-body canvas-texture">
+  <section class="ev-frame">
+    <div class="ev-frame-inner canvas-texture">
     <section class="ev-intro">
       <div class="ev-intro-img">
         <Image src={eventPhoto} alt="Guests at one of Anna's beading workshops" widths={[500, 900]} sizes="(max-width: 820px) 92vw, 46vw" />
@@ -90,8 +93,14 @@ const heroUrl = (await getImage({ src: files['../assets/paintings/15.jpeg'].defa
         </div>
       </div>
     </section>
+    </div>
+  </section>
+  </div>
 
-    <section id="beading" class="ev-section">
+  <main class="events-body canvas-texture">
+    <section id="beading" class="ev-band" style={`background-image:url('${beadingBgUrl}')`}>
+    <div class="ev-frame-inner canvas-texture">
+    <div class="ev-section">
       <div class="ev-section-head">
         <span class="about-title">
           <h2>Beading events</h2>
@@ -131,23 +140,47 @@ const heroUrl = (await getImage({ src: files['../assets/paintings/15.jpeg'].defa
       <div class="ev-section-cta">
         <a class="ev-btn" href="/contact">Enquire about a beading event</a>
       </div>
+    </div>
+    </div>
     </section>
 
-    <div class="ev-head"><h2>The experiences</h2></div>
-    <div class="ev-cards">
-      <div class="ev-card">
-        <h3>Beading workshops</h3>
-        <p>Guests can enjoy hands-on beading workshops where they create their own earrings, bracelets, necklaces, keyrings, and personalised accessories using a vibrant variety of beads and materials.</p>
+    <section id="painting" class="ev-band" style={`background-image:url('${paintingBgUrl}')`}>
+    <div class="ev-frame-inner canvas-texture">
+    <div class="ev-section">
+      <div class="ev-section-head">
+        <span class="about-title">
+          <h2>Painting events</h2>
+          <span class="brush-u">
+            <svg viewBox="0 0 300 34" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <defs>
+                <filter id="brp" x="-4%" y="-60%" width="108%" height="220%">
+                  <feTurbulence type="fractalNoise" baseFrequency="0.7 0.12" numOctaves="2" seed="4" result="n"/>
+                  <feDisplacementMap in="SourceGraphic" in2="n" scale="4.5"/>
+                </filter>
+                <filter id="brpdry">
+                  <feTurbulence type="fractalNoise" baseFrequency="0.01 0.55" numOctaves="2" seed="6" result="t"/>
+                  <feComponentTransfer in="t"><feFuncA type="linear" slope="0.55" intercept="0.62"/></feComponentTransfer>
+                </filter>
+                <mask id="brpmask">
+                  <rect width="300" height="34" fill="#fff"/>
+                  <rect width="300" height="34" fill="#000" filter="url(#brpdry)"/>
+                </mask>
+              </defs>
+              <path filter="url(#brp)" mask="url(#brpmask)" fill="currentColor"
+                d="M4 18 C 70 9 140 8 168 11 C 226 16 268 12 297 16 C 270 25 210 27 150 24 C 95 22 48 26 4 18 Z"/>
+            </svg>
+          </span>
+        </span>
       </div>
-      <div class="ev-card">
-        <h3>Guided painting</h3>
-        <p>Painting sessions are also available, offering the choice of following a step-by-step guided artwork or creatively exploring personal ideas with artistic support and guidance throughout the experience.</p>
-      </div>
-      <div class="ev-card">
-        <h3>Face painting</h3>
-        <p>Face painting services can also be included, bringing an additional colourful and playful element to events while adding character, creativity, and memorable entertainment for guests of all ages.</p>
+
+      <p class="ev-section-lead">Painting sessions offer the choice of following a step-by-step guided artwork or freely exploring your own ideas, with artistic support and guidance throughout the experience.</p>
+
+      <div class="ev-section-cta">
+        <a class="ev-btn" href="/contact">Enquire about a painting event</a>
       </div>
     </div>
+    </div>
+    </section>
 
     <section class="ev-cta">
       <h2>Planning a celebration?</h2>
