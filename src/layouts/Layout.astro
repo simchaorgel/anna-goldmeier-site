@@ -163,16 +163,9 @@ const ogImage = new URL(image, Astro.site);
                 };
                 burger.addEventListener('click', () => setMenu(true));
                 menu.addEventListener('click', (e) => {
-                    // nav-link tap → close instantly (no fade), so the view
-                    // transition doesn't snapshot a half-faded overlay
-                    if ((e.target as Element).closest('a')) {
-                        menu.style.transition = 'none';
-                        setMenu(false);
-                        void menu.offsetHeight;
-                        menu.style.transition = '';
-                    } else {
-                        setMenu(false);
-                    }
+                    // nav-link tap → leave the overlay open while the router
+                    // loads; the view transition dissolves it into the new page
+                    if (!(e.target as Element).closest('a')) setMenu(false);
                 });
             }
         });
