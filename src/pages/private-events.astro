@@ -23,6 +23,7 @@ const files = import.meta.glob<{ default: ImageMetadata }>('../assets/paintings/
 const heroUrl = (await getImage({ src: files['../assets/paintings/15.jpeg'].default, width: 1920, format: 'webp', quality: 80 })).src;
 const beadingBgUrl = (await getImage({ src: files['../assets/paintings/19.jpeg'].default, width: 1920, format: 'webp', quality: 80 })).src;
 const paintingBgUrl = (await getImage({ src: files['../assets/paintings/23.jpeg'].default, width: 1920, format: 'webp', quality: 80 })).src;
+const faceBgUrl = (await getImage({ src: files['../assets/paintings/7.jpeg'].default, width: 1920, format: 'webp', quality: 80 })).src;
 ---
 <Layout
   nav="page"
@@ -127,7 +128,7 @@ const paintingBgUrl = (await getImage({ src: files['../assets/paintings/23.jpeg'
         </span>
       </div>
 
-      <p class="ev-section-lead">Guests can enjoy hands-on beading workshops where they create their own earrings, bracelets, necklaces, keyrings, and personalised accessories using a vibrant variety of beads and materials.</p>
+      <p class="ev-section-lead">Guests can enjoy hands-on beading workshops where they create their own earrings, bracelets, necklaces, keyrings, and personalised accessories using a vibrant variety of beads and materials. Pricing is £300 for a party of up to 15 guests; for larger groups, please get in touch to discuss your needs in more detail.</p>
 
       <div class="ev-scrap">
         {beadingShots.map((shot) => (
@@ -173,10 +174,48 @@ const paintingBgUrl = (await getImage({ src: files['../assets/paintings/23.jpeg'
         </span>
       </div>
 
-      <p class="ev-section-lead">Painting sessions offer the choice of following a step-by-step guided artwork or freely exploring your own ideas, with artistic support and guidance throughout the experience.</p>
+      <p class="ev-section-lead">Painting sessions offer the choice of following a step-by-step guided artwork or freely exploring your own ideas, with artistic support and guidance throughout the experience. Pricing is £250 for a party of up to 10 guests; for larger groups, please get in touch to discuss your needs in more detail.</p>
 
       <div class="ev-section-cta">
         <a class="ev-btn" href="/contact">Enquire about a painting event</a>
+      </div>
+    </div>
+    </div>
+    </section>
+
+    <section id="face-painting" class="ev-band" style={`background-image:url('${faceBgUrl}')`}>
+    <div class="ev-frame-inner canvas-texture">
+    <div class="ev-section">
+      <div class="ev-section-head">
+        <span class="about-title">
+          <h2>Face painting</h2>
+          <span class="brush-u">
+            <svg viewBox="0 0 300 34" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <defs>
+                <filter id="brf" x="-4%" y="-60%" width="108%" height="220%">
+                  <feTurbulence type="fractalNoise" baseFrequency="0.7 0.12" numOctaves="2" seed="2" result="n"/>
+                  <feDisplacementMap in="SourceGraphic" in2="n" scale="4.5"/>
+                </filter>
+                <filter id="brfdry">
+                  <feTurbulence type="fractalNoise" baseFrequency="0.01 0.55" numOctaves="2" seed="8" result="t"/>
+                  <feComponentTransfer in="t"><feFuncA type="linear" slope="0.55" intercept="0.62"/></feComponentTransfer>
+                </filter>
+                <mask id="brfmask">
+                  <rect width="300" height="34" fill="#fff"/>
+                  <rect width="300" height="34" fill="#000" filter="url(#brfdry)"/>
+                </mask>
+              </defs>
+              <path filter="url(#brf)" mask="url(#brfmask)" fill="currentColor"
+                d="M4 18 C 70 9 140 8 168 11 C 226 16 268 12 297 16 C 270 25 210 27 150 24 C 95 22 48 26 4 18 Z"/>
+            </svg>
+          </span>
+        </span>
+      </div>
+
+      <p class="ev-section-lead">Face painting brings a colourful and playful element to your event, adding character, creativity, and memorable entertainment for guests of all ages. Pricing is £100 for one hour and £150 for two.</p>
+
+      <div class="ev-section-cta">
+        <a class="ev-btn" href="/contact">Enquire about face painting</a>
       </div>
     </div>
     </div>

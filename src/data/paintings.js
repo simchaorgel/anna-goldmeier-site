@@ -27,7 +27,6 @@ const raw = [
 	{ file: '1.jpeg',  title: 'Unusual Habitat', medium: 'Pencil' },
 	{ file: '24.jpg', title: 'Evening Thoughts', medium: 'Oil on canvas' },
 	{ file: '25.jpg', title: 'Season coming', medium: 'Oil on canvas' },
-	{ file: '26.jpg', title: 'Kever Rachel', medium: 'Oil on canvas' },
 	{ file: '27.jpg', title: 'The Tree of Life', medium: 'Oil on canvas' },
 ];
 
