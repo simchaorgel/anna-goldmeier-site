@@ -21,27 +21,20 @@
 
 /* intro (image + text) */
 .ev-intro{max-width:1060px;margin:0 auto;display:grid;grid-template-columns:.95fr 1.05fr;
-    gap:clamp(2rem,5vw,4.5rem);align-items:start}
-.ev-intro-img{overflow:hidden;border-radius:4px;box-shadow:0 26px 54px -32px rgba(40,30,20,.5)}
-.ev-intro-img img{display:block;width:100%;height:auto}
+    gap:clamp(2rem,5vw,4.5rem);align-items:stretch}
+.ev-intro-img{position:relative;overflow:hidden;border-radius:4px;box-shadow:0 26px 54px -32px rgba(40,30,20,.5)}
+.ev-intro-img img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top}
 .ev-intro-text h2{font-family:'Fraunces',serif;font-weight:330;font-size:clamp(2rem,4vw,2.9rem);line-height:1.05;margin-bottom:.3rem}
 .ev-intro-text h2 em{font-style:italic;color:var(--accent)}
 .ev-intro-text p{color:#4a443c;font-weight:300;line-height:1.9;font-size:1.02rem;margin-bottom:1rem;max-width:54ch}
 
-/* jump cards under the intro copy → jewellery + beading sections */
-.ev-jumps{margin-top:1.6rem;display:grid;grid-template-columns:1fr 1fr;gap:1rem}
-.ev-jump{position:relative;display:flex;align-items:center;justify-content:space-between;gap:.6rem;
-    text-decoration:none;color:#fff;border-radius:6px;overflow:hidden;padding:1rem 1.1rem}
-.ev-jump img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 35%;z-index:0;
-    filter:saturate(1.04);transition:object-position 1.1s ease}
-.ev-jump:hover img{object-position:center 55%}
-.ev-jump::after{content:"";position:absolute;inset:0;z-index:1;
-    background:linear-gradient(90deg,rgba(15,11,7,.82),rgba(15,11,7,.42))}
-.ev-jump-body{position:relative;z-index:2;min-width:0;text-shadow:0 1px 8px rgba(15,11,7,.5)}
-.ev-jump-label{display:block;font-family:'Fraunces',serif;font-weight:420;font-size:1.3rem;line-height:1.1}
-.ev-jump-sub{display:block;margin-top:.22rem;font-size:.76rem;opacity:.88;font-weight:300;line-height:1.4}
-.ev-jump-chev{position:relative;z-index:2;flex:none;display:grid;place-items:center}
-.ev-jump-chev svg{width:20px;height:20px;display:block}
+/* jump buttons under the intro copy → one per section, in scroll order */
+.ev-jumps{margin-top:1.6rem;display:grid;grid-template-columns:repeat(3,1fr);gap:.7rem}
+.ev-jump{display:flex;align-items:center;justify-content:center;text-align:center;
+    padding:.75rem .6rem;border:1px solid rgba(28,26,23,.4);border-radius:999px;background:transparent;
+    color:var(--ink);text-decoration:none;font-size:.74rem;letter-spacing:.11em;text-transform:uppercase;
+    line-height:1.2;transition:background .3s,color .3s,border-color .3s}
+.ev-jump:hover{background:var(--ink);border-color:var(--ink);color:var(--paper)}
 
 /* standalone framed band with its own painting (beading, jewellery…) */
 .ev-band{position:relative;margin-top:-1px;scroll-margin-top:90px;
@@ -61,21 +54,42 @@
 
 /* scrapbook photo cluster — tilted, overlapping photo prints */
 .ev-scrap{margin-top:clamp(2.4rem,6vh,3.6rem);display:flex;flex-wrap:wrap;justify-content:center;align-items:center}
-.ev-scrap figure{margin:0;flex:0 0 auto;width:clamp(155px,17vw,215px);background:#fff;
-    padding:.5rem;border-radius:2px;box-shadow:0 20px 42px -24px rgba(40,30,20,.65)}
+.ev-scrap figure{margin:0 -16px 0 0;flex:0 0 auto;width:clamp(155px,17vw,215px);background:#fbf7ef;
+    padding:.5rem;border:1px solid var(--line);border-radius:2px;
+    box-shadow:0 2px 6px -2px rgba(35,26,17,.5),0 20px 42px -24px rgba(40,30,20,.65)}
+.ev-scrap figure:last-child{margin-right:0}
 .ev-scrap figure img{display:block;width:100%;height:auto;border-radius:1px}
-.ev-scrap figure:nth-child(1){transform:rotate(-5deg) translateY(12px);margin-right:-16px;z-index:2}
-.ev-scrap figure:nth-child(2){transform:rotate(3deg) translateY(-8px);margin-right:-16px;z-index:3}
-.ev-scrap figure:nth-child(3){transform:rotate(-2deg) translateY(6px);margin-right:-16px;z-index:4}
-.ev-scrap figure:nth-child(4){transform:rotate(4deg) translateY(-5px);margin-right:-16px;z-index:3}
+.ev-scrap figure:nth-child(1){transform:rotate(-5deg) translateY(12px);z-index:2}
+.ev-scrap figure:nth-child(2){transform:rotate(3deg) translateY(-8px);z-index:3}
+.ev-scrap figure:nth-child(3){transform:rotate(-2deg) translateY(6px);z-index:4}
+.ev-scrap figure:nth-child(4){transform:rotate(4deg) translateY(-5px);z-index:3}
 .ev-scrap figure:nth-child(5){transform:rotate(-4deg) translateY(11px);z-index:2}
+.ev-scrap figure:nth-child(6){transform:rotate(2deg) translateY(-7px);z-index:3}
+.ev-scrap figure:nth-child(7){transform:rotate(-3deg) translateY(9px);z-index:2}
+/* mixed-orientation prints (painting shots) — share a height so rows stay level */
+.ev-scrap.wide figure{width:auto}
+.ev-scrap.wide img{width:auto;height:clamp(180px,22vw,250px)}
+/* forced row break so the pile splits into even rows instead of greedy 4+1 wrapping.
+   only the wide clusters (painting, face) overflow a line and need it; the plain
+   beading cluster fits one line and stays there until it wraps naturally when narrow */
+.ev-scrap-break{flex-basis:0;height:0}
+.ev-scrap.wide .ev-scrap-break{flex-basis:100%}
+.ev-scrap.wide .ev-scrap-break ~ figure{margin-top:-14px}
 
 .ev-section-cta{margin-top:clamp(2.4rem,6vh,3.6rem);text-align:center}
 
 @media(max-width:820px){
-.ev-scrap{gap:1.1rem}
-.ev-scrap figure{width:clamp(135px,40vw,185px);margin:0;transform:rotate(-2deg)}
+/* slimmer frame chrome on phones — gives the print piles real room */
+.ev-frame-inner{padding-left:1.2rem;padding-right:1.2rem}
+.ev-scrap{gap:.85rem}
+.ev-scrap figure{width:clamp(125px,38vw,185px);margin:0;padding:.4rem;transform:rotate(-2deg)}
 .ev-scrap figure:nth-child(even){transform:rotate(2deg)}
+/* wide clusters keep shared-height rows on phones too — landscape prints stay
+   substantial, and a landscape + portrait pair still fits side by side */
+.ev-scrap.wide figure{width:auto}
+.ev-scrap.wide img{width:auto;height:clamp(120px,32vw,200px)}
+.ev-scrap.wide .ev-scrap-break{flex-basis:0}
+.ev-scrap.wide .ev-scrap-break ~ figure{margin-top:0}
 }
 
 /* section heading */
@@ -102,10 +116,7 @@
 
 @media(max-width:820px){
 .ev-intro{grid-template-columns:1fr;gap:1.6rem}
+.ev-intro-img img{position:static;height:auto}
 .ev-cards{grid-template-columns:1fr;max-width:460px}
 .ev-btn{white-space:normal}
-}
-
-@media(max-width:560px){
-.ev-jumps{grid-template-columns:1fr}
 }

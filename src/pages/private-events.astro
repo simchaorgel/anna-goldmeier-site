@@ -3,27 +3,41 @@ import Layout from '../layouts/Layout.astro';
 import '../styles/events.css';
 import { Image, getImage } from 'astro:assets';
 import type { ImageMetadata } from 'astro';
-import eventPhoto from '../assets/jewlery_event.jpeg';
-import bands from '../assets/bands1.jpeg';
-import beading1 from '../assets/beading_1.jpeg';
-import beading2 from '../assets/beading_2.jpeg';
-import beading3 from '../assets/beading_3.jpeg';
-import beading4 from '../assets/beading_4.jpeg';
-import beading5 from '../assets/beading_5.jpeg';
+import eventPhoto from '../assets/event.jpg';
 
-const beadingShots = [
-  { src: beading1, alt: 'Beaded jewellery made at a workshop' },
-  { src: beading2, alt: 'Guests choosing beads at a beading workshop' },
-  { src: beading3, alt: 'Hands threading beads onto a bracelet' },
-  { src: beading4, alt: 'A finished handmade beaded piece' },
-  { src: beading5, alt: 'Colourful beads and materials laid out' },
+const beadingAlts = [
+  'Beaded jewellery made at a workshop',
+  'Guests choosing beads at a beading workshop',
+  'Hands threading beads onto a bracelet',
+  'A finished handmade beaded piece',
+  'Colourful beads and materials laid out',
 ];
+const beadingFiles = import.meta.glob<{ default: ImageMetadata }>('../assets/beading_events/*.{jpeg,jpg}', { eager: true });
+const beadingShots = Object.values(beadingFiles).map((m, i) => ({
+  src: m.default,
+  alt: beadingAlts[i] ?? 'A photo from one of Anna\'s beading workshops',
+}));
+const beadingBreakAfter = Math.ceil(beadingShots.length / 2);
 
 const files = import.meta.glob<{ default: ImageMetadata }>('../assets/paintings/*.{jpeg,jpg}', { eager: true });
 const heroUrl = (await getImage({ src: files['../assets/paintings/15.jpeg'].default, width: 1920, format: 'webp', quality: 80 })).src;
 const beadingBgUrl = (await getImage({ src: files['../assets/paintings/19.jpeg'].default, width: 1920, format: 'webp', quality: 80 })).src;
 const paintingBgUrl = (await getImage({ src: files['../assets/paintings/23.jpeg'].default, width: 1920, format: 'webp', quality: 80 })).src;
 const faceBgUrl = (await getImage({ src: files['../assets/paintings/7.jpeg'].default, width: 1920, format: 'webp', quality: 80 })).src;
+
+const paintingEventFiles = import.meta.glob<{ default: ImageMetadata }>('../assets/painting_events/*.{jpg,jpeg}', { eager: true });
+const paintingShots = Object.values(paintingEventFiles).map((m) => ({ src: m.default, alt: "A painting created at one of Anna's easel parties" }));
+const paintingBreakAfter = Math.ceil(paintingShots.length / 2);
+
+const faceFiles = import.meta.glob<{ default: ImageMetadata }>('../assets/face_painting_events/*.{jpeg,jpg}', { eager: true });
+const faceShots = Object.values(faceFiles).map((m) => ({ src: m.default, alt: "A guest with face paint at one of Anna's events" }));
+const faceBreakAfter = Math.ceil(faceShots.length / 2);
+
+const jumps = [
+  { href: '#beading', label: 'Beading' },
+  { href: '#painting', label: 'Painting' },
+  { href: '#face-painting', label: 'Face painting' },
+];
 ---
 <Layout
   nav="page"
@@ -46,7 +60,7 @@ const faceBgUrl = (await getImage({ src: files['../assets/paintings/7.jpeg'].def
       </div>
       <div class="ev-intro-text">
         <span class="about-title">
-          <h2>Creativity brought to your celebration</h2>
+          <h2>Bring creativity to your celebration</h2>
           <span class="brush-u">
             <svg viewBox="0 0 300 34" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
               <defs>
@@ -71,26 +85,9 @@ const faceBgUrl = (await getImage({ src: files['../assets/paintings/7.jpeg'].def
         <p>Bring a unique creative experience to your next event with personalised art and craft workshops designed to entertain, engage, and inspire guests of all ages. Perfect for private parties, celebrations, and special occasions, each experience can be tailored to suit the atmosphere and style of your event.</p>
         <p>With a vibrant and dynamic approach suited to a wide range of ages, my work is designed to bring personality, creativity, and memorable interaction to every event.</p>
         <div class="ev-jumps">
-          <a class="ev-jump" href="#jewellery">
-            <Image src={bands} alt="Handcrafted beaded jewellery" widths={[300, 600]} sizes="(max-width: 820px) 46vw, 260px" />
-            <span class="ev-jump-body">
-              <span class="ev-jump-label">Jewellery</span>
-              <span class="ev-jump-sub">Handcrafted beaded pieces</span>
-            </span>
-            <span class="ev-jump-chev" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            </span>
-          </a>
-          <a class="ev-jump" href="#beading">
-            <Image src={eventPhoto} alt="Guests at a beading workshop" widths={[300, 600]} sizes="(max-width: 820px) 46vw, 260px" />
-            <span class="ev-jump-body">
-              <span class="ev-jump-label">Beading events</span>
-              <span class="ev-jump-sub">Hands-on group workshops</span>
-            </span>
-            <span class="ev-jump-chev" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            </span>
-          </a>
+          {jumps.map((jump) => (
+            <a class="ev-jump" href={jump.href}>{jump.label}</a>
+          ))}
         </div>
       </div>
     </section>
@@ -131,10 +128,13 @@ const faceBgUrl = (await getImage({ src: files['../assets/paintings/7.jpeg'].def
       <p class="ev-section-lead">Guests can enjoy hands-on beading workshops where they create their own earrings, bracelets, necklaces, keyrings, and personalised accessories using a vibrant variety of beads and materials. Pricing is £300 for a party of up to 15 guests; for larger groups, please get in touch to discuss your needs in more detail.</p>
 
       <div class="ev-scrap">
-        {beadingShots.map((shot) => (
-          <figure>
-            <Image src={shot.src} alt={shot.alt} widths={[300, 600]} sizes="(max-width: 820px) 40vw, 215px" />
-          </figure>
+        {beadingShots.map((shot, i) => (
+          <>
+            <figure>
+              <Image src={shot.src} alt={shot.alt} widths={[300, 600]} sizes="(max-width: 820px) 40vw, 215px" />
+            </figure>
+            {i === beadingBreakAfter - 1 && <span class="ev-scrap-break" aria-hidden="true"></span>}
+          </>
         ))}
       </div>
 
@@ -176,6 +176,17 @@ const faceBgUrl = (await getImage({ src: files['../assets/paintings/7.jpeg'].def
 
       <p class="ev-section-lead">Painting sessions offer the choice of following a step-by-step guided artwork or freely exploring your own ideas, with artistic support and guidance throughout the experience. Pricing is £250 for a party of up to 10 guests; for larger groups, please get in touch to discuss your needs in more detail.</p>
 
+      <div class="ev-scrap wide">
+        {paintingShots.map((shot, i) => (
+          <>
+            <figure>
+              <Image src={shot.src} alt={shot.alt} widths={[360, 720]} sizes="(max-width: 820px) 55vw, 340px" />
+            </figure>
+            {i === paintingBreakAfter - 1 && <span class="ev-scrap-break" aria-hidden="true"></span>}
+          </>
+        ))}
+      </div>
+
       <div class="ev-section-cta">
         <a class="ev-btn" href="/contact">Enquire about a painting event</a>
       </div>
@@ -213,6 +224,17 @@ const faceBgUrl = (await getImage({ src: files['../assets/paintings/7.jpeg'].def
       </div>
 
       <p class="ev-section-lead">Face painting brings a colourful and playful element to your event, adding character, creativity, and memorable entertainment for guests of all ages. Pricing is £100 for one hour and £150 for two.</p>
+
+      <div class="ev-scrap wide">
+        {faceShots.map((shot, i) => (
+          <>
+            <figure>
+              <Image src={shot.src} alt={shot.alt} widths={[360, 720]} sizes="(max-width: 820px) 55vw, 280px" />
+            </figure>
+            {i === faceBreakAfter - 1 && <span class="ev-scrap-break" aria-hidden="true"></span>}
+          </>
+        ))}
+      </div>
 
       <div class="ev-section-cta">
         <a class="ev-btn" href="/contact">Enquire about face painting</a>

@@ -1,3 +1,6 @@
+image_dump/
+
+
 # build output
 dist/
 # generated types
