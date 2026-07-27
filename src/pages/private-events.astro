@@ -3,7 +3,9 @@ import Layout from '../layouts/Layout.astro';
 import '../styles/events.css';
 import { Image, getImage } from 'astro:assets';
 import type { ImageMetadata } from 'astro';
-import eventPhoto from '../assets/event.jpg';
+// loose files at the assets root aren't covered by any glob below — import them directly
+import beadingCard from '../assets/beading_card.jpeg';
+import paintingCard from '../assets/painting_card.jpg';
 
 const beadingAlts = [
   'Beaded jewellery made at a workshop',
@@ -20,8 +22,9 @@ const beadingShots = Object.values(beadingFiles).map((m, i) => ({
 const beadingBreakAfter = Math.ceil(beadingShots.length / 2);
 
 const files = import.meta.glob<{ default: ImageMetadata }>('../assets/paintings/*.{jpeg,jpg}', { eager: true });
-const heroUrl = (await getImage({ src: files['../assets/paintings/15.jpeg'].default, width: 1920, format: 'webp', quality: 80 })).src;
-const beadingBgUrl = (await getImage({ src: files['../assets/paintings/19.jpeg'].default, width: 1920, format: 'webp', quality: 80 })).src;
+// .ev-top now covers the hero, the intro and the beading band as one continuous image,
+// so it needs more pixels than the other bands to survive being scaled over that height
+const heroUrl = (await getImage({ src: files['../assets/paintings/21.jpeg'].default, width: 2400, format: 'webp', quality: 80 })).src;
 const paintingBgUrl = (await getImage({ src: files['../assets/paintings/23.jpeg'].default, width: 1920, format: 'webp', quality: 80 })).src;
 const faceBgUrl = (await getImage({ src: files['../assets/paintings/7.jpeg'].default, width: 1920, format: 'webp', quality: 80 })).src;
 
@@ -33,10 +36,28 @@ const faceFiles = import.meta.glob<{ default: ImageMetadata }>('../assets/face_p
 const faceShots = Object.values(faceFiles).map((m) => ({ src: m.default, alt: "A guest with face paint at one of Anna's events" }));
 const faceBreakAfter = Math.ceil(faceShots.length / 2);
 
-const jumps = [
-  { href: '#beading', label: 'Beading' },
-  { href: '#painting', label: 'Painting' },
-  { href: '#face-painting', label: 'Face painting' },
+// the three event types, as wide cards under the intro copy. to change a card's picture,
+// swap the filename in its `src` for another file in that folder (a name that isn't in the
+// folder's glob will fail the build); for a file outside those folders, import it above.
+const picks = [
+  {
+    href: '#beading',
+    label: 'Beading',
+    desc: 'Earrings, bracelets, necklaces and keyrings, made by your guests',
+    src: beadingCard,
+  },
+  {
+    href: '#painting',
+    label: 'Painting',
+    desc: 'Guided step-by-step artworks, or free creative exploration',
+    src: paintingCard,
+  },
+  {
+    href: '#face-painting',
+    label: 'Face painting',
+    desc: 'Colourful, playful entertainment for all ages',
+    src: faceFiles['../assets/face_painting_events/IMG20230828174223.jpg'].default,
+  },
 ];
 ---
 <Layout
@@ -44,59 +65,41 @@ const jumps = [
   title="Private Events | Anna's Art Studio"
   description="Hands-on art, craft, and face-painting experiences by Anna Goldmeier for parties, celebrations, and special occasions."
 >
+  <main class="events-body canvas-texture">
   <div class="ev-top" style={`background-image:url('${heroUrl}')`}>
   <section class="page-hero">
     <div class="page-hero-inner">
       <h1>Private Events</h1>
-      <p>Hands-on art, craft, and face-painting experiences for parties and celebrations.</p>
+      <p>Hands-on creative experiences for parties and events.</p>
     </div>
   </section>
 
   <section class="ev-frame">
     <div class="ev-frame-inner canvas-texture">
     <section class="ev-intro">
-      <div class="ev-intro-img">
-        <Image src={eventPhoto} alt="Guests at one of Anna's beading workshops" widths={[500, 900]} sizes="(max-width: 820px) 92vw, 46vw" />
-      </div>
       <div class="ev-intro-text">
-        <span class="about-title">
-          <h2>Bring creativity to your celebration</h2>
-          <span class="brush-u">
-            <svg viewBox="0 0 300 34" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-              <defs>
-                <filter id="bre" x="-4%" y="-60%" width="108%" height="220%">
-                  <feTurbulence type="fractalNoise" baseFrequency="0.7 0.12" numOctaves="2" seed="5" result="n"/>
-                  <feDisplacementMap in="SourceGraphic" in2="n" scale="4.5"/>
-                </filter>
-                <filter id="bredry">
-                  <feTurbulence type="fractalNoise" baseFrequency="0.01 0.55" numOctaves="2" seed="9" result="t"/>
-                  <feComponentTransfer in="t"><feFuncA type="linear" slope="0.55" intercept="0.62"/></feComponentTransfer>
-                </filter>
-                <mask id="bremask">
-                  <rect width="300" height="34" fill="#fff"/>
-                  <rect width="300" height="34" fill="#000" filter="url(#bredry)"/>
-                </mask>
-              </defs>
-              <path filter="url(#bre)" mask="url(#bremask)" fill="currentColor"
-                d="M4 18 C 70 9 140 8 168 11 C 226 16 268 12 297 16 C 270 25 210 27 150 24 C 95 22 48 26 4 18 Z"/>
-            </svg>
-          </span>
-        </span>
-        <p>Bring a unique creative experience to your next event with personalised art and craft workshops designed to entertain, engage, and inspire guests of all ages. Perfect for private parties, celebrations, and special occasions, each experience can be tailored to suit the atmosphere and style of your event.</p>
-        <p>With a vibrant and dynamic approach suited to a wide range of ages, my work is designed to bring personality, creativity, and memorable interaction to every event.</p>
-        <div class="ev-jumps">
-          {jumps.map((jump) => (
-            <a class="ev-jump" href={jump.href}>{jump.label}</a>
-          ))}
-        </div>
+        <p>Bring a unique creative experience to your next event with personalised art and craft workshops designed to entertain, engage, and inspire guests of all ages. Perfect for private parties and special occasions, each experience can be tailored to suit the atmosphere and style of your event.</p>
+      </div>
+
+      <div class="ev-picks">
+        {picks.map((pick) => (
+          <a class="ev-pick" href={pick.href}>
+            <Image src={pick.src} alt="" widths={[400, 800]} sizes="(max-width: 820px) 92vw, 280px" />
+            <div class="cap">
+              <h3>{pick.label}</h3>
+              <span class="desc">{pick.desc}</span>
+            </div>
+            <span class="arrow" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            </span>
+          </a>
+        ))}
       </div>
     </section>
     </div>
   </section>
-  </div>
 
-  <main class="events-body canvas-texture">
-    <section id="beading" class="ev-band" style={`background-image:url('${beadingBgUrl}')`}>
+  <section id="beading" class="ev-band ev-band-flush">
     <div class="ev-frame-inner canvas-texture">
     <div class="ev-section">
       <div class="ev-section-head">
@@ -144,6 +147,7 @@ const jumps = [
     </div>
     </div>
     </section>
+  </div>
 
     <section id="painting" class="ev-band" style={`background-image:url('${paintingBgUrl}')`}>
     <div class="ev-frame-inner canvas-texture">

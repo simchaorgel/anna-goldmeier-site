@@ -4,41 +4,62 @@
 .events-body{position:relative;z-index:2;background:var(--paper);
     padding:0 0 clamp(4rem,9vh,6rem)}
 
-/* shared painting behind the title + framed intro (one continuous image) */
+/* shared painting behind the title + framed intro + beading (one continuous image) */
 .ev-top{position:relative;background-size:cover;background-position:center top}
-/* darken the whole shared image uniformly (hero + frame border) */
+/* darken the whole shared image uniformly (hero + both frame borders). the fade to black
+   only lands at the very bottom, where the next band's gradient picks it up */
 .ev-top::before{content:"";position:absolute;inset:0;pointer-events:none;
     background:linear-gradient(rgba(14,11,8,.5),
+        rgba(14,11,8,.44) clamp(110px,17vh,180px),
         rgba(14,11,8,.44) calc(100% - clamp(110px,17vh,180px)),#131009)}
 .ev-top .page-hero{background:transparent;min-height:auto;
     padding-top:clamp(5.5rem,13vh,8rem);padding-bottom:clamp(1.4rem,4vh,2.6rem)}
 .ev-top .page-hero::before{display:none}
 
 /* framed intro — paper content with a painting border (image continues from the hero) */
-.ev-frame{position:relative;z-index:1;padding:clamp(1rem,3vw,2.6rem)}
+.ev-frame{position:relative;z-index:1;padding:clamp(1rem,3vw,2.6rem);
+    padding-bottom:clamp(.4rem,1.1vw,.95rem)}
 .ev-frame-inner{position:relative;isolation:isolate;max-width:1360px;margin:0 auto;background:var(--paper);
     padding:clamp(2.6rem,5vw,4rem) clamp(2rem,5vw,4.5rem)}
+/* the beading band lives inside .ev-top and shares its background element, so the painting
+   runs unbroken from the hero down past the intro to the end of beading — no image of its
+   own, and no gradient of its own (.ev-top::before already covers it) */
+.ev-band-flush{background:none}
+.ev-band-flush::before{display:none}
+.ev-frame .ev-frame-inner{padding-bottom:clamp(1.8rem,3.5vw,2.6rem)}
+.ev-band-flush>.ev-frame-inner{padding-top:clamp(1.8rem,3.5vw,2.6rem)}
 
-/* intro (image + text) */
-.ev-intro{max-width:1060px;margin:0 auto;display:grid;grid-template-columns:.95fr 1.05fr;
-    gap:clamp(2rem,5vw,4.5rem);align-items:stretch}
-.ev-intro-img{position:relative;overflow:hidden;border-radius:4px;box-shadow:0 26px 54px -32px rgba(40,30,20,.5)}
-.ev-intro-img img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top}
-.ev-intro-text h2{font-family:'Fraunces',serif;font-weight:330;font-size:clamp(2rem,4vw,2.9rem);line-height:1.05;margin-bottom:.3rem}
-.ev-intro-text h2 em{font-style:italic;color:var(--accent)}
-.ev-intro-text p{color:#4a443c;font-weight:300;line-height:1.9;font-size:1.02rem;margin-bottom:1rem;max-width:54ch}
+/* intro — one centred block of justified copy, then the three event cards */
+.ev-intro{max-width:1060px;margin:0 auto}
+/* the paragraph carries the section on its own now, so it's set as a lede —
+   larger, tighter-leaded, ragged and balanced rather than justified */
+.ev-intro-text p{font-family:'Fraunces',serif;font-optical-sizing:auto;
+    color:#3f3a33;font-weight:300;line-height:1.7;font-size:clamp(1.02rem,1.7vw,1.18rem);
+    letter-spacing:-.005em;max-width:54ch;margin:0 auto;text-align:center;text-wrap:balance}
 
-/* jump buttons under the intro copy → one per section, in scroll order */
-.ev-jumps{margin-top:1.6rem;display:grid;grid-template-columns:repeat(3,1fr);gap:.7rem}
-.ev-jump{display:flex;align-items:center;justify-content:center;text-align:center;
-    padding:.75rem .6rem;border:1px solid rgba(28,26,23,.4);border-radius:999px;background:transparent;
-    color:var(--ink);text-decoration:none;font-size:.74rem;letter-spacing:.11em;text-transform:uppercase;
-    line-height:1.2;transition:background .3s,color .3s,border-color .3s}
-.ev-jump:hover{background:var(--ink);border-color:var(--ink);color:var(--paper)}
+/* wide picture-cards under the intro copy → one per section, side by side in scroll order */
+.ev-picks{max-width:860px;margin:clamp(2rem,4.5vh,2.8rem) auto 0;
+    display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(.7rem,1.3vw,1rem)}
+.ev-pick{position:relative;display:block;overflow:hidden;border-radius:3px;text-decoration:none;color:#fff;
+    height:clamp(120px,15vw,165px);box-shadow:0 16px 34px -24px rgba(0,0,0,.6)}
+.ev-pick img{width:100%;height:100%;object-fit:cover;transition:transform .9s ease;filter:saturate(1.04)}
+.ev-pick:hover img{transform:scale(1.05)}
+.ev-pick::after{content:"";position:absolute;inset:0;background:linear-gradient(transparent 28%,rgba(15,11,7,.86))}
+.ev-pick .cap{position:absolute;left:.95rem;right:2.5rem;bottom:.9rem;z-index:2}
+.ev-pick .cap h3{font-family:'Fraunces',serif;font-weight:420;font-size:1.18rem;margin-bottom:.2rem}
+.ev-pick .cap .desc{font-size:.72rem;opacity:.85;font-weight:300;line-height:1.4}
+.ev-pick .arrow{position:absolute;right:.9rem;bottom:.95rem;z-index:2;display:flex;transition:transform .35s ease}
+.ev-pick .arrow svg{width:18px;height:18px}
+.ev-pick:hover .arrow{transform:translateX(5px)}
+@media(prefers-reduced-motion:reduce){
+.ev-pick img,.ev-pick .arrow{transition:none}
+.ev-pick:hover img{transform:none}
+.ev-pick:hover .arrow{transform:none}
+}
 
 /* standalone framed band with its own painting (beading, jewellery…) */
-.ev-band{position:relative;margin-top:-1px;scroll-margin-top:90px;
-    background-size:cover;background-position:center;padding:clamp(1rem,3vw,2.6rem)}
+.ev-band{position:relative;margin-top:-1px;scroll-margin-top:90px;background-size:cover;background-position:center;
+    padding:clamp(.4rem,1.1vw,.95rem) clamp(1rem,3vw,2.6rem)}
 .ev-band::before{content:"";position:absolute;inset:0;pointer-events:none;
     background:linear-gradient(#131009,rgba(14,11,8,.5) clamp(110px,17vh,180px),
         rgba(14,11,8,.44) calc(100% - clamp(110px,17vh,180px)),#131009)}
@@ -115,8 +136,8 @@
 .ev-btn.ghost:hover{background:var(--ink);color:var(--paper)}
 
 @media(max-width:820px){
-.ev-intro{grid-template-columns:1fr;gap:1.6rem}
-.ev-intro-img img{position:static;height:auto}
+.ev-picks{grid-template-columns:1fr;max-width:460px;gap:.85rem}
+.ev-pick{height:clamp(112px,30vw,150px)}
 .ev-cards{grid-template-columns:1fr;max-width:460px}
 .ev-btn{white-space:normal}
 }
