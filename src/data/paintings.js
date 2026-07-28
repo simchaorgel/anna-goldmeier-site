@@ -9,7 +9,7 @@ const raw = [
 	{ file: '6.jpeg',  title: 'Heritage', medium: 'Oil on canvas' },
 	{ file: '7.jpeg',  title: 'Tulips & Oranges', medium: 'Oil on canvas' },
 	{ file: '17.jpeg', title: 'Kever Rochel', medium: 'Oil on canvas' },
-	{ file: '9.jpeg',  title: 'Carpet of wildflowers', medium: 'Oil on canvas' },
+	{ file: '9.jpeg',  title: 'Carpet of Wildflowers', medium: 'Oil on canvas' },
 	{ file: '10.jpeg',  title: 'The Western Wall', medium: 'Oil on canvas' },
 	{ file: '11.jpeg',  title: 'Moshe in The Nile', medium: 'Oil on canvas' },
 	{ file: '12.jpeg',  title: 'Orange Flower', medium: 'Oil on canvas' },
