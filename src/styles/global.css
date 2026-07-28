@@ -35,11 +35,15 @@ html{scrollbar-width:thin;scrollbar-color:rgba(124,115,106,.5) var(--paper)}
 body[data-nav="page"] .nav{position:absolute}
 body[data-nav="page"] .nav.scrolled,
 body[data-nav="page"] .nav.nav-hidden{position:fixed}
-/* wordmark — visible on every page except the homepage's transparent top state */
-.brand{font-family:'Fraunces',serif;font-size:1.15rem;color:var(--ink);text-decoration:none;letter-spacing:.01em;
+/* wordmark — visible on every page except the homepage's transparent top state.
+   handwritten SVG inherits the link colour via fill:currentColor */
+.brand{display:block;color:var(--ink);text-decoration:none;
     opacity:1;pointer-events:auto;transition:opacity .4s ease,color .4s ease}
-.nav:not(.scrolled) .brand{color:#fff;text-shadow:0 1px 14px rgba(0,0,0,.55)}
-.nav.scrolled .brand{color:var(--ink);text-shadow:none}
+.brand svg{display:block;height:24px;width:auto}
+.nav:not(.scrolled) .brand{color:#fff}
+.nav:not(.scrolled) .brand svg{filter:drop-shadow(0 1px 8px rgba(0,0,0,.5))}
+.nav.scrolled .brand{color:var(--ink)}
+.nav.scrolled .brand svg{filter:none}
 body[data-nav="hero"] .nav:not(.scrolled) .brand{opacity:0;pointer-events:none}
 /* page-mode bar slides in already-solid → snap text colour/opacity (motion comes from the bar's transform) */
 body[data-nav="page"] .nav .brand,

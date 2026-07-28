@@ -1,6 +1,9 @@
 ---
 import '../styles/global.css';
 import { ClientRouter } from 'astro:transitions';
+// handwritten wordmark — traced vector, fill="currentColor" so it follows the
+// nav's white↔ink colour states like the text it replaces
+import wordmark from '../assets/wordmark.svg?raw';
 const {
   nav = "hero",   // "hero" | "page" | "solid"
   footer = "solid",   // "solid" | "transparent" (transparent also darkens the page base)
@@ -51,7 +54,7 @@ const ogImage = new URL(image, Astro.site);
 <body data-nav={nav} data-footer={footer}>
     <!-- Header  -->
     <nav class:list={["nav", { scrolled: nav === "solid" }]}>
-        <a class="brand" href="/">Anna's Art Studio</a>
+        <a class="brand" href="/" aria-label="Anna's Art Studio — home"><Fragment set:html={wordmark} /></a>
         <div class="links"><a href="/">Home</a><a href="/gallery">Gallery</a><a href="/private-events">Private Events</a><a href="/contact">Contact</a></div>
         <button class="burger" aria-label="Open menu" aria-expanded="false">
             <svg viewBox="0 0 30 30" fill="none" stroke="currentColor" stroke-linecap="round" aria-hidden="true">
