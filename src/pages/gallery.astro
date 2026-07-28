@@ -101,12 +101,16 @@ const heroUrl = (await getImage({ src: files['../assets/paintings/19.jpeg'].defa
       const openLb = (i) => {
         clearTimeout(closeTimer);
         fill(i);
-        const sw = window.innerWidth - document.documentElement.clientWidth;
-        if (sw > 0) {
+        // lock scrolling first, then measure the real width change and pad exactly that
+        // back — float-accurate, unlike integer innerWidth/clientWidth, whose rounding
+        // leaves a sub-pixel reflow at fractional display scaling
+        const before = document.documentElement.getBoundingClientRect().width;
+        lb.classList.add('open'); lb.setAttribute('aria-hidden', 'false'); document.body.classList.add('menu-open');
+        const sw = document.documentElement.getBoundingClientRect().width - before;
+        if (sw > 0.1) {
           document.body.style.paddingRight = sw + 'px';
           if (navEl) navEl.style.right = sw + 'px';   // 'right' isn't transitioned, so it snaps (no slide)
         }
-        lb.classList.add('open'); lb.setAttribute('aria-hidden', 'false'); document.body.classList.add('menu-open');
       };
       const closeLb = () => {
         lb.classList.remove('open'); lb.setAttribute('aria-hidden', 'true');

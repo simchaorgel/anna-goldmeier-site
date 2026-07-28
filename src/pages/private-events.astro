@@ -7,6 +7,12 @@ import type { ImageMetadata } from 'astro';
 import beadingCard from '../assets/beading_card.jpeg';
 import paintingCard from '../assets/painting_card.jpg';
 
+// each strip photo also gets an optimized large rendition for the lightbox view
+const withFull = (shots: { src: ImageMetadata; alt: string }[]) => Promise.all(shots.map(async (s) => ({
+  ...s,
+  full: (await getImage({ src: s.src, width: 1400, format: 'webp', quality: 82 })).src,
+})));
+
 const beadingAlts = [
   'Beaded jewellery made at a workshop',
   'Guests choosing beads at a beading workshop',
@@ -15,10 +21,10 @@ const beadingAlts = [
   'Colourful beads and materials laid out',
 ];
 const beadingFiles = import.meta.glob<{ default: ImageMetadata }>('../assets/beading_events/*.{jpeg,jpg}', { eager: true });
-const beadingShots = Object.values(beadingFiles).map((m, i) => ({
+const beadingShots = await withFull(Object.values(beadingFiles).map((m, i) => ({
   src: m.default,
   alt: beadingAlts[i] ?? 'A photo from one of Anna\'s beading workshops',
-}));
+})));
 const beadingBreakAfter = Math.ceil(beadingShots.length / 2);
 
 const files = import.meta.glob<{ default: ImageMetadata }>('../assets/paintings/*.{jpeg,jpg}', { eager: true });
@@ -29,11 +35,11 @@ const paintingBgUrl = (await getImage({ src: files['../assets/paintings/23.jpeg'
 const faceBgUrl = (await getImage({ src: files['../assets/paintings/5.jpeg'].default, width: 1920, format: 'webp', quality: 80 })).src;
 
 const paintingEventFiles = import.meta.glob<{ default: ImageMetadata }>('../assets/painting_events/*.{jpg,jpeg}', { eager: true });
-const paintingShots = Object.values(paintingEventFiles).map((m) => ({ src: m.default, alt: "A painting created at one of Anna's easel parties" }));
+const paintingShots = await withFull(Object.values(paintingEventFiles).map((m) => ({ src: m.default, alt: "A painting created at one of Anna's easel parties" })));
 const paintingBreakAfter = Math.ceil(paintingShots.length / 2);
 
 const faceFiles = import.meta.glob<{ default: ImageMetadata }>('../assets/face_painting_events/*.{jpeg,jpg}', { eager: true });
-const faceShots = Object.values(faceFiles).map((m) => ({ src: m.default, alt: "A guest with face paint at one of Anna's events" }));
+const faceShots = await withFull(Object.values(faceFiles).map((m) => ({ src: m.default, alt: "A guest with face paint at one of Anna's events" })));
 const faceBreakAfter = Math.ceil(faceShots.length / 2);
 
 // the three event types, as wide cards under the intro copy. to change a card's picture,
@@ -136,7 +142,9 @@ const picks = [
         {beadingShots.map((shot, i) => (
           <>
             <figure>
-              <Image src={shot.src} alt={shot.alt} widths={[300, 600]} sizes="(max-width: 820px) 40vw, 215px" />
+              <button class="ev-shot" type="button" data-full={shot.full} aria-label={`View larger — ${shot.alt}`}>
+                <Image src={shot.src} alt={shot.alt} widths={[300, 600]} sizes="(max-width: 820px) 40vw, 215px" />
+              </button>
             </figure>
             {i === beadingBreakAfter - 1 && <span class="ev-scrap-break" aria-hidden="true"></span>}
           </>
@@ -186,7 +194,9 @@ const picks = [
         {paintingShots.map((shot, i) => (
           <>
             <figure>
-              <Image src={shot.src} alt={shot.alt} widths={[360, 720]} sizes="(max-width: 820px) 55vw, 340px" />
+              <button class="ev-shot" type="button" data-full={shot.full} aria-label={`View larger — ${shot.alt}`}>
+                <Image src={shot.src} alt={shot.alt} widths={[360, 720]} sizes="(max-width: 820px) 55vw, 340px" />
+              </button>
             </figure>
             {i === paintingBreakAfter - 1 && <span class="ev-scrap-break" aria-hidden="true"></span>}
           </>
@@ -235,7 +245,9 @@ const picks = [
         {faceShots.map((shot, i) => (
           <>
             <figure>
-              <Image src={shot.src} alt={shot.alt} widths={[360, 720]} sizes="(max-width: 820px) 55vw, 280px" />
+              <button class="ev-shot" type="button" data-full={shot.full} aria-label={`View larger — ${shot.alt}`}>
+                <Image src={shot.src} alt={shot.alt} widths={[360, 720]} sizes="(max-width: 820px) 55vw, 280px" />
+              </button>
             </figure>
             {i === faceBreakAfter - 1 && <span class="ev-scrap-break" aria-hidden="true"></span>}
           </>
@@ -257,4 +269,100 @@ const picks = [
       </div>
     </section>
   </main>
+
+  <div class="ev-lb" id="evLb" aria-hidden="true">
+    <button class="lb-close" aria-label="Close">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+    </button>
+    <button class="lb-nav lb-prev" aria-label="Previous">&lsaquo;</button>
+    <button class="lb-nav lb-next" aria-label="Next">&rsaquo;</button>
+    <img class="ev-lb-img" id="evLbImg" alt="" />
+  </div>
+
+  <script is:inline>
+   if (!window.__evLbReg) {
+    window.__evLbReg = true;
+    // image-only lightbox over the photo strips — same pattern as the gallery's:
+    // element listeners rebind to fresh elements on every astro:page-load, global
+    // key handling registers once under the guard above
+    document.addEventListener('astro:page-load', () => {
+      const lb = document.getElementById('evLb');
+      if (!lb) return;                              // not on the events page
+      const lbImg = document.getElementById('evLbImg');
+      const navEl = document.querySelector('.nav');
+      let group = [], idx = 0, closeTimer;
+      const fill = (i) => {
+        idx = (i + group.length) % group.length;
+        const btn = group[idx];
+        const thumb = btn.querySelector('img');
+        // show the already-loaded thumbnail instantly (blurred), then sharpen to full-res
+        lbImg.src = (thumb && (thumb.currentSrc || thumb.src)) || btn.dataset.full;
+        lbImg.alt = (thumb && thumb.alt) || '';
+        lbImg.classList.add('lb-loading');
+        const full = new Image();
+        full.onload = () => { if (group[idx] === btn) { lbImg.src = btn.dataset.full; lbImg.classList.remove('lb-loading'); } };
+        full.src = btn.dataset.full;
+        // warm the cache for the neighbours so prev/next feel instant
+        [idx + 1, idx - 1].forEach((n) => {
+          const b = group[(n + group.length) % group.length];
+          const im = new Image(); im.src = b.dataset.full;
+        });
+      };
+      const openLb = (shots, i) => {
+        clearTimeout(closeTimer);
+        group = shots; fill(i);
+        // lock scrolling first, then measure the real width change and pad exactly that
+        // back — float-accurate, unlike integer innerWidth/clientWidth, whose rounding
+        // leaves a sub-pixel reflow at fractional display scaling
+        const before = document.documentElement.getBoundingClientRect().width;
+        lb.classList.add('open'); lb.setAttribute('aria-hidden', 'false'); document.body.classList.add('menu-open');
+        const sw = document.documentElement.getBoundingClientRect().width - before;
+        if (sw > 0.1) {
+          document.body.style.paddingRight = sw + 'px';
+          if (navEl) navEl.style.right = sw + 'px';   // 'right' isn't transitioned, so it snaps (no slide)
+        }
+      };
+      const closeLb = () => {
+        lb.classList.remove('open'); lb.setAttribute('aria-hidden', 'true');
+        // wait for the fade-out before restoring the scrollbar, so content doesn't jump mid-close
+        clearTimeout(closeTimer);
+        closeTimer = setTimeout(() => {
+          document.body.classList.remove('menu-open');
+          document.body.style.paddingRight = '';
+          if (navEl) navEl.style.right = '';
+        }, 300);
+      };
+      const step = (d) => fill(idx + d);
+
+      // prev/next cycle within the section whose print was tapped
+      document.querySelectorAll('.ev-scrap').forEach((strip) => {
+        const shots = [...strip.querySelectorAll('.ev-shot')];
+        shots.forEach((btn, i) => btn.addEventListener('click', () => openLb(shots, i)));
+      });
+      lb.querySelector('.lb-close').addEventListener('click', closeLb);
+      lb.querySelector('.lb-prev').addEventListener('click', (e) => { e.stopPropagation(); step(-1); });
+      lb.querySelector('.lb-next').addEventListener('click', (e) => { e.stopPropagation(); step(1); });
+      lb.addEventListener('click', (e) => { if (!e.target.closest('.ev-lb-img')) closeLb(); });
+
+      // swipe left/right to navigate (mobile)
+      let tsx = 0, tsy = 0;
+      lb.addEventListener('touchstart', (e) => { tsx = e.changedTouches[0].clientX; tsy = e.changedTouches[0].clientY; }, { passive: true });
+      lb.addEventListener('touchend', (e) => {
+        const dx = e.changedTouches[0].clientX - tsx;
+        const dy = e.changedTouches[0].clientY - tsy;
+        if (Math.abs(dx) > 45 && Math.abs(dx) > Math.abs(dy)) step(dx < 0 ? 1 : -1);
+      }, { passive: true });
+
+      window.__evLbState = { lb, closeLb, step };
+    });
+
+    document.addEventListener('keydown', (e) => {
+      const g = window.__evLbState;
+      if (!g || !g.lb.classList.contains('open')) return;
+      if (e.key === 'Escape') g.closeLb();
+      else if (e.key === 'ArrowLeft') g.step(-1);
+      else if (e.key === 'ArrowRight') g.step(1);
+    });
+   }
+  </script>
 </Layout>

@@ -108,20 +108,65 @@
 
 .ev-section-cta{margin-top:clamp(2.4rem,6vh,3.6rem);text-align:center}
 
+/* prints are buttons that open the lightbox — the photo eases in slightly on hover,
+   zooming within its paper frame */
+.ev-shot{display:block;width:100%;padding:0;margin:0;border:0;background:none;cursor:pointer;overflow:hidden}
+.ev-shot img{transition:transform .6s ease}
+.ev-shot:hover img,.ev-shot:focus-visible img{transform:scale(1.018)}
+@media(prefers-reduced-motion:reduce){
+.ev-shot img{transition:none}
+.ev-shot:hover img,.ev-shot:focus-visible img{transform:none}
+}
+
+/* ---- image-only lightbox over the photo strips (same look as the gallery's) ---- */
+.ev-lb{position:fixed;inset:0;z-index:80;display:flex;align-items:center;justify-content:center;
+    padding:clamp(1rem,4vw,3rem);background:rgba(18,15,12,.88);
+    backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+    opacity:0;visibility:hidden;transition:opacity .3s ease, visibility .3s}
+.ev-lb.open{opacity:1;visibility:visible}
+.ev-lb-img{max-width:min(88vw,1000px);max-height:86vh;width:auto;height:auto;display:block;
+    box-shadow:0 30px 70px -30px rgba(0,0,0,.7);transition:filter .4s ease}
+.ev-lb-img.lb-loading{filter:blur(16px)}
+.ev-lb .lb-close,.ev-lb .lb-nav{position:absolute;background:none;border:0;color:#f2ece0;cursor:pointer;opacity:.8;transition:opacity .25s}
+.ev-lb .lb-close:hover,.ev-lb .lb-nav:hover{opacity:1}
+.ev-lb .lb-close{top:1.1rem;right:1.3rem;width:40px;height:40px}
+.ev-lb .lb-close svg{width:26px;height:26px}
+.ev-lb .lb-nav{top:50%;transform:translateY(-50%);font-family:'Fraunces',serif;font-size:2.6rem;line-height:1;padding:.4rem 1rem}
+.ev-lb .lb-prev{left:.4rem}
+.ev-lb .lb-next{right:.4rem}
+@media(max-width:760px){
+.ev-lb-img{max-width:100%;max-height:70vh}
+.ev-lb .lb-nav{top:auto;bottom:1.6rem;transform:none;font-size:2.2rem;padding:.2rem .9rem}
+.ev-lb .lb-prev{left:calc(50% - 96px);right:auto}
+.ev-lb .lb-next{left:auto;right:calc(50% - 96px)}
+}
+
 @media(max-width:820px){
 /* slimmer frame chrome on phones — gives the print piles real room */
 .ev-frame-inner{padding-left:1.2rem;padding-right:1.2rem}
 /* justification opens ugly gaps on a phone-width measure */
 .ev-section-lead{text-align:center;text-align-last:auto;hyphens:none}
-.ev-scrap{gap:.85rem}
-.ev-scrap figure{width:clamp(125px,38vw,185px);margin:0;padding:.4rem;transform:rotate(-2deg)}
-.ev-scrap figure:nth-child(even){transform:rotate(2deg)}
-/* wide clusters keep shared-height rows on phones too — landscape prints stay
-   substantial, and a landscape + portrait pair still fits side by side */
-.ev-scrap.wide figure{width:auto}
-.ev-scrap.wide img{width:auto;height:clamp(120px,32vw,200px)}
-.ev-scrap.wide .ev-scrap-break{flex-basis:0}
-.ev-scrap.wide .ev-scrap-break ~ figure{margin-top:0}
+/* on phones each pile becomes one horizontal strip of prints — flicked through like a
+   stack of photos. uniform print height, gentle alternating tilt, bleeding to the edges
+   of the paper card. handles any photo count with no ragged wrapping or orphans */
+.ev-scrap{flex-wrap:nowrap;justify-content:flex-start;gap:.9rem;
+    margin-left:-1.2rem;margin-right:-1.2rem;padding:.7rem 1.2rem 1.5rem;
+    overflow-x:auto;-webkit-overflow-scrolling:touch;
+    scroll-snap-type:x proximity;scroll-padding:0 1.2rem;scrollbar-width:none}
+.ev-scrap::-webkit-scrollbar{display:none}
+/* contact shadow only — the long desktop drop-shadows merge into a solid band
+   under a strip, reading as a section border */
+.ev-scrap figure{width:auto;margin:0;padding:.4rem;scroll-snap-align:center;
+    box-shadow:0 2px 6px -2px rgba(35,26,17,.5)}
+/* nth-of-type outranks the desktop per-print nth-child tilts (same specificity, later),
+   and skips the break spans so the alternation never doubles up */
+.ev-scrap figure:nth-of-type(odd){transform:rotate(-2deg) translateY(3px)}
+.ev-scrap figure:nth-of-type(even){transform:rotate(2deg) translateY(-3px)}
+/* centres a short strip that fits the screen, stays left-scrollable when it doesn't */
+.ev-scrap figure:first-of-type{margin-left:auto}
+.ev-scrap figure:last-of-type{margin-right:auto}
+.ev-scrap figure img,.ev-scrap.wide img{width:auto;height:clamp(185px,50vw,240px)}
+.ev-scrap .ev-scrap-break{display:none}
 }
 
 /* section heading */
