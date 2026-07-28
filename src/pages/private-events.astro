@@ -26,7 +26,7 @@ const files = import.meta.glob<{ default: ImageMetadata }>('../assets/paintings/
 // so it needs more pixels than the other bands to survive being scaled over that height
 const heroUrl = (await getImage({ src: files['../assets/paintings/21.jpeg'].default, width: 2400, format: 'webp', quality: 80 })).src;
 const paintingBgUrl = (await getImage({ src: files['../assets/paintings/23.jpeg'].default, width: 1920, format: 'webp', quality: 80 })).src;
-const faceBgUrl = (await getImage({ src: files['../assets/paintings/7.jpeg'].default, width: 1920, format: 'webp', quality: 80 })).src;
+const faceBgUrl = (await getImage({ src: files['../assets/paintings/5.jpeg'].default, width: 1920, format: 'webp', quality: 80 })).src;
 
 const paintingEventFiles = import.meta.glob<{ default: ImageMetadata }>('../assets/painting_events/*.{jpg,jpeg}', { eager: true });
 const paintingShots = Object.values(paintingEventFiles).map((m) => ({ src: m.default, alt: "A painting created at one of Anna's easel parties" }));
@@ -128,7 +128,9 @@ const picks = [
         </span>
       </div>
 
-      <p class="ev-section-lead">Guests can enjoy hands-on beading workshops where they create their own earrings, bracelets, necklaces, keyrings, and personalised accessories using a vibrant variety of beads and materials. Pricing is £300 for a party of up to 15 guests; for larger groups, please get in touch to discuss your needs in more detail.</p>
+      <p class="ev-section-lead">Guests can enjoy hands-on beading workshops where they create their own earrings, bracelets, necklaces, and personalised accessories using a variety of bead styles and materials.
+        This event is great for both children and adults, many of whom describe the process as calming and therapeutic.
+        Pricing is £300 for a party of up to 15 guests; for larger groups, please get in touch to discuss your needs in more detail.</p>
 
       <div class="ev-scrap">
         {beadingShots.map((shot, i) => (
@@ -248,7 +250,6 @@ const picks = [
     </section>
 
     <section class="ev-cta">
-      <h2></h2>
       <p>For availability, bookings, and personalised event enquiries, please get in touch directly.</p>
       <div class="ev-cta-row">
         <a class="ev-btn" href="/contact">Enquire about an event</a>

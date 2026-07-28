@@ -64,14 +64,23 @@
     background:linear-gradient(#131009,rgba(14,11,8,.5) clamp(110px,17vh,180px),
         rgba(14,11,8,.44) calc(100% - clamp(110px,17vh,180px)),#131009)}
 .ev-band .ev-section{margin-bottom:0}
+/* last band — nothing follows but paper, so leave a wide strip of painting visible
+   below the frame, and keep the darkening uniform instead of fading to black */
+#face-painting{padding-bottom:clamp(1.7rem,4.5vw,3.4rem)}
+#face-painting::before{background:linear-gradient(#131009,
+    rgba(14,11,8,.5) clamp(110px,17vh,180px),rgba(14,11,8,.44))}
 
 /* redesigned content section (beading, jewellery…) */
 .ev-section{max-width:1060px;margin:0 auto clamp(3.5rem,9vh,6rem);scroll-margin-top:90px}
 .ev-section-head{text-align:center}
 .ev-section-head h2{font-family:'Fraunces',serif;font-weight:330;font-size:clamp(2rem,4vw,2.9rem);
     line-height:1.05;color:var(--ink)}
-.ev-section-lead{max-width:58ch;margin:1.3rem auto 0;text-align:center;color:#4a443c;
-    font-weight:300;line-height:1.9;font-size:1.02rem}
+/* set in Source Serif rather than Inter — a crisp transitional serif with a proper text
+   optical size, justified with a centred last line so the block stays symmetrical */
+.ev-section-lead{font-family:'Source Serif 4',Georgia,'Times New Roman',serif;
+    font-optical-sizing:auto;font-weight:400;color:#413b34;
+    max-width:82ch;margin:1.3rem auto 0;line-height:1.8;font-size:1.06rem;
+    text-align:justify;text-align-last:center;hyphens:auto}
 
 /* scrapbook photo cluster — tilted, overlapping photo prints */
 .ev-scrap{margin-top:clamp(2.4rem,6vh,3.6rem);display:flex;flex-wrap:wrap;justify-content:center;align-items:center}
@@ -102,6 +111,8 @@
 @media(max-width:820px){
 /* slimmer frame chrome on phones — gives the print piles real room */
 .ev-frame-inner{padding-left:1.2rem;padding-right:1.2rem}
+/* justification opens ugly gaps on a phone-width measure */
+.ev-section-lead{text-align:center;text-align-last:auto;hyphens:none}
 .ev-scrap{gap:.85rem}
 .ev-scrap figure{width:clamp(125px,38vw,185px);margin:0;padding:.4rem;transform:rotate(-2deg)}
 .ev-scrap figure:nth-child(even){transform:rotate(2deg)}
@@ -140,4 +151,10 @@
 .ev-pick{height:clamp(112px,30vw,150px)}
 .ev-cards{grid-template-columns:1fr;max-width:460px}
 .ev-btn{white-space:normal}
+}
+
+/* stack the closing CTA buttons at equal width rather than letting them wrap ragged */
+@media(max-width:560px){
+.ev-cta-row{flex-direction:column;align-items:stretch;max-width:290px;margin:0 auto}
+.ev-cta-row .ev-btn{width:100%;text-align:center}
 }

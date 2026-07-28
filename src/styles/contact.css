@@ -26,8 +26,8 @@
     border:1px solid var(--line);border-radius:3px;padding:.85rem 1rem;transition:border-color .2s,box-shadow .2s,background .2s}
 .field input::placeholder,.field textarea::placeholder{color:#b3a99a}
 .field input:hover,.field select:hover,.field textarea:hover{border-color:#cabfac}
-.field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:var(--accent);background:#fff;
-    box-shadow:0 0 0 3px rgba(156,63,46,.1)}
+.field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:var(--select);background:#fff;
+    box-shadow:0 0 0 3px rgba(179,157,219,.3)}
 .field textarea{min-height:190px;resize:vertical}
 .form-submit{align-self:flex-start;margin-top:.4rem;font-size:.76rem;letter-spacing:.16em;text-transform:uppercase;
     border:1px solid var(--ink);background:var(--ink);color:var(--paper);padding:.85rem 1.9rem;border-radius:999px;

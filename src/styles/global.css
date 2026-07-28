@@ -2,7 +2,9 @@
    GLOBAL — base + shared chrome (nav, menu, footer) + shared utilities.
    Page-specific styles live in home.css, gallery.css, etc.
    ==================================================================== */
-:root{ --paper:#f4f0e9; --paper2:#efe7da; --ink:#1c1a17; --muted:#7c736a; --line:#ddd5c8; --accent:#9c3f2e; }
+:root{ --paper:#f4f0e9; --paper2:#efe7da; --ink:#1c1a17; --muted:#7c736a; --line:#ddd5c8; --accent:#9c3f2e;
+    /* the text-selection purple, reused for form focus rings */
+    --select:#b39ddb; }
 *{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth;-webkit-tap-highlight-color:transparent}
 body{font-family:'Inter',sans-serif;color:#fff;background:#100e0c;overflow-x:hidden}
@@ -52,13 +54,12 @@ body[data-nav="page"] .nav .links a{transition:none}
 .nav.scrolled .links a{color:var(--ink);text-shadow:none;opacity:.7}
 .nav.scrolled .links a:hover{opacity:1}
 
-/* burger (mobile) */
-.burger{display:none;flex-direction:column;justify-content:center;gap:5px;width:30px;height:30px;
+/* burger (mobile) — three quick brush dashes, same language as the heading underlines */
+.burger{display:none;align-items:center;justify-content:center;width:34px;height:34px;
         background:none;border:0;padding:0;cursor:pointer;color:#fff}
-.burger span{display:block;height:3px;width:24px;background:currentColor;border-radius:2px;
-            transition:transform .3s ease, opacity .3s ease;box-shadow:0 1px 6px rgba(0,0,0,.35)}
+.burger svg{width:27px;height:27px;filter:drop-shadow(0 1px 5px rgba(0,0,0,.45))}
 .nav.scrolled .burger{color:var(--ink)}
-.nav.scrolled .burger span{box-shadow:none}
+.nav.scrolled .burger svg{filter:none}
 
 /* fullscreen glassy menu */
 .menu{position:fixed;inset:0;z-index:60;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:1.3rem;

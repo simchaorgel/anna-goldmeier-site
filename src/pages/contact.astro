@@ -34,8 +34,8 @@ const heroUrl = (await getImage({ src: files['../assets/paintings/18.jpeg'].defa
             <input id="name" name="name" type="text" autocomplete="name" required />
           </div>
           <div class="field">
-            <label for="email">Email</label>
-            <input id="email" name="email" type="email" autocomplete="email" required />
+            <label for="contact">Email or phone number</label>
+            <input id="contact" name="contact" type="text" required />
           </div>
           <div class="field">
             <label for="message">Message</label>
@@ -75,8 +75,22 @@ const heroUrl = (await getImage({ src: files['../assets/paintings/18.jpeg'].defa
       document.addEventListener('astro:page-load', () => {
         const form = document.getElementById('contactForm');
         if (!form) return;
+
+        // contact must be a valid email OR a phone number (at least 7 digits)
+        const contact = document.getElementById('contact');
+        const validateContact = () => {
+          const v = contact.value.trim();
+          const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+          const digits = (v.match(/\d/g) || []).length;
+          const isPhone = /^[+()\-.\s\d]+$/.test(v) && digits >= 7;
+          contact.setCustomValidity(v === '' || isEmail || isPhone ? '' : 'Please enter a valid email address, or a phone number.');
+        };
+        contact.addEventListener('input', validateContact);
+
         form.addEventListener('submit', async (e) => {
           e.preventDefault();
+          validateContact();
+          if (!form.checkValidity()) { form.reportValidity(); return; }
           try {
             const data = new FormData(form);
             await fetch('/', {
