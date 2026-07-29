@@ -39,7 +39,7 @@ body[data-nav="page"] .nav.nav-hidden{position:fixed}
    handwritten SVG inherits the link colour via fill:currentColor */
 .brand{display:block;color:var(--ink);text-decoration:none;
     opacity:1;pointer-events:auto;transition:opacity .4s ease,color .4s ease}
-.brand svg{display:block;height:24px;width:auto}
+.brand svg{display:block;height:18px;width:auto}
 .nav:not(.scrolled) .brand{color:#fff}
 .nav:not(.scrolled) .brand svg{filter:drop-shadow(0 1px 8px rgba(0,0,0,.5))}
 .nav.scrolled .brand{color:var(--ink)}
@@ -120,6 +120,7 @@ body.menu-open{overflow:hidden}
 .foot-left{display:flex;align-items:baseline;gap:1rem;flex-wrap:wrap}
 .foot-mark{font-family:'Fraunces',serif;font-size:1.2rem}
 .foot-copy{font-size:.76rem;color:var(--muted)}
+.foot-credit{font-size:.7rem;color:var(--muted);opacity:.75;letter-spacing:.02em}
 .foot-right{display:flex;align-items:center;gap:.7rem;flex-wrap:wrap}
 .foot-btn{display:inline-block;font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;white-space:nowrap;
     border:1px solid var(--ink);color:var(--ink);padding:.6rem 1.2rem;border-radius:999px;text-decoration:none;
@@ -135,6 +136,7 @@ body.menu-open{overflow:hidden}
 body[data-footer="transparent"] .site-footer{background:transparent;border-top-color:transparent;color:#fff;
     text-shadow:0 1px 14px rgba(0,0,0,.55)}
 body[data-footer="transparent"] .foot-copy,
+body[data-footer="transparent"] .foot-credit,
 body[data-footer="transparent"] .to-top{color:rgba(255,255,255,.6)}
 body[data-footer="transparent"] .to-top:hover{color:#fff}
 body[data-footer="transparent"] .foot-btn{border-color:rgba(255,255,255,.5);color:#fff}

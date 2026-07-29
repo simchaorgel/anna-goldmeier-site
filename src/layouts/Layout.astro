@@ -56,7 +56,7 @@ const ogImage = new URL(image, Astro.site);
 <body data-nav={nav} data-footer={footer}>
     <!-- Header  -->
     <nav class:list={["nav", { scrolled: nav === "solid" }]}>
-        <a class="brand" href="/" aria-label="Anna's Art Studio — home"><Fragment set:html={wordmark} /></a>
+        <a class="brand" href="/" aria-label="Anna Goldmeier Art — home"><Fragment set:html={wordmark} /></a>
         <div class="links"><a href="/">Home</a><a href="/gallery">Gallery</a><a href="/private-events">Private Events</a><a href="/contact">Contact</a></div>
         <button class="burger" aria-label="Open menu" aria-expanded="false">
             <svg viewBox="0 0 30 30" fill="none" stroke="currentColor" stroke-linecap="round" aria-hidden="true">
@@ -82,7 +82,7 @@ const ogImage = new URL(image, Astro.site);
             <a href="/">Home</a>
             <a href="/gallery">Gallery</a>
             <a href="/private-events">Private Events</a>
-            <a href="/contact">Contact</a>
+            <a href="/contact">Contact Me</a>
         </nav>
     </div>
 
@@ -94,6 +94,7 @@ const ogImage = new URL(image, Astro.site);
         <div class="foot-left">
             <span class="foot-mark">Anna's Art Studio</span>
             <span class="foot-copy">© 2026</span>
+            <span class="foot-credit">Site by Simcha Orgel</span>
         </div>
         <div class="foot-right">
             <a class="foot-btn" href="/gallery">Gallery</a>
