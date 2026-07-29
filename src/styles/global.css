@@ -138,6 +138,18 @@ body.menu-open{overflow:hidden}
     margin-left:.4rem;transition:color .25s}
 .to-top:hover{color:var(--ink)}
 
+/* mobile: stop the two blocks fighting over one ragged row — stack and centre them.
+   .foot-mark / .to-top take a full basis so they land on their own lines, which
+   groups © + credit together without needing a wrapper element. */
+@media(max-width:760px){
+.site-footer{flex-direction:column;align-items:center;text-align:center;gap:1.15rem;
+    padding:2rem clamp(1.4rem,6vw,2.5rem)}
+.foot-left{justify-content:center;gap:.35rem .9rem}
+.foot-mark{flex-basis:100%;font-size:1.3rem}
+.foot-right{justify-content:center;gap:.6rem}
+.to-top{flex-basis:100%;margin-left:0;margin-top:.45rem}
+}
+
 /* transparent footer variant (immersive dark pages) — sits on the dark base, light text */
 body[data-footer="transparent"] .site-footer{background:transparent;border-top-color:transparent;color:#fff;
     text-shadow:0 1px 14px rgba(0,0,0,.55)}
