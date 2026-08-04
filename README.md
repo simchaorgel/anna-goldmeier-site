@@ -2,7 +2,7 @@
 
 Website for **Anna Goldmeier**, an artist based in London who creates original oil paintings, handcrafted jewellery, and private events. A showcase that drives enquiries (no online checkout).
 
-🔗 https://frabjous-paprenjak.netlify.app
+🔗 https://annagoldmeierart.co.uk
 
 ## Tech stack
 - [Astro](https://astro.build) (static output) · **Node ≥ 20**

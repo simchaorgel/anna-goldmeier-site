@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://frabjous-paprenjak.netlify.app/sitemap-index.xml
+Sitemap: https://annagoldmeierart.co.uk/sitemap-index.xml
